@@ -17,9 +17,18 @@
             <button id="todos-btn">Todos</button>
             <button id="today-btn">Today</button>
             <button id="this-week-btn">This week</button>
-            <h2>Projects</h2>
-            <button id="show-proj-btn">Display projects here</button>
-            <button id="add-proj-btn">Add projects here</button>
+            <div class="projects">
+                <h2 id="projects-title">Projects</h2>
+                <button class="show-project-btn">Display projects here</button>
+                <button class="add-project-btn">Add projects here</button>
+                <div class="project-popup">
+                    <input type="text" name="" class="project-popup-input">
+                    <div class="project-popup-btns">
+                        <button class="project-popup-add-btn">ADD</button>
+                        <button class="project-popup-cancel-btn">CANCEL</button>
+                    </div>
+                </div>
+            </div>
         </nav>
         <div id="content"></div>
     </main>
