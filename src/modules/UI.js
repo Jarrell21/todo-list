@@ -1,25 +1,34 @@
+import Task from "./task";
+import Storage from "./Storage";
+
 const UI = (() => {
     const loadHome = () => {
-        UI.loadProjectContent('Todos');
-        const contentBody = document.querySelector('#content-body');
-        contentBody.appendChild(addTaskButton());
-        contentBody.appendChild(addTaskPopup());
+        loadProjectContent('Todos');
     }
 
     const loadToday = () => {
-        UI.loadProjectContent('Today');
+        loadProjectContent('Today');
     }
 
     const loadThisWeek = () => {
-        UI.loadProjectContent('This week');
+        loadProjectContent('This week');
     }
 
     const loadProjectContent = (project) => {
         const content = document.querySelector('#content');
-
         content.innerHTML = `
-            <div id="content-title">${project}</div>
-            <div id="content-body"></div>`;
+        <div id="content-title">${project}</div>`;
+
+        const contentBody = document.createElement('div');
+        contentBody.setAttribute('id', 'content-body');
+        contentBody.appendChild(loadTasks(project));
+
+        content.appendChild(contentBody);
+
+        if (project === 'Todos'){
+            contentBody.appendChild(addTaskButton());
+            contentBody.appendChild(addTaskPopup());
+        }
     }
 
     const addTaskButton = () => {
@@ -33,9 +42,14 @@ const UI = (() => {
     }
 
     const addTaskPopup = () => {
+        const content = document.querySelector('#content');
+        const projectName = document.querySelector('#content-title').textContent;
         const popUpContainer = document.createElement('div');
+        const taskTitle = document.createElement('input');
+        // const taskDescription = document.createElement('input');
+        // const taskDueDate = document.createElement('input');
+        // const taskPriority = document.createElement('input');
         const popUpBtns = document.createElement('div');
-        const input = document.createElement('input');
         const addBtn = document.createElement('button');
         const cancelBtn = document.createElement('button');
 
@@ -43,14 +57,28 @@ const UI = (() => {
         cancelBtn.textContent = 'CANCEL';
 
         popUpContainer.classList.add('task-popup');
-        input.classList.add('task-popup-input');
+        taskTitle.classList.add('task-popup-title');
+        // taskDescription.classList.add('task-popup-desc');
+        // taskDueDate.classList.add('task-popup-date');
+        // taskPriority.classList.add('task-popup-priority');
         popUpBtns.classList.add('task-popup-btns');
         addBtn.classList.add('task-popup-add-btn');
         cancelBtn.classList.add('task-popup-cancel-btn');
         
+        addBtn.addEventListener('click', () => {
+            const taskTitleVal = document.querySelector('.task-popup-title').value;
+            addTask(taskTitleVal);
+            closeTaskPopup()
+            content.textContent = '';
+            loadProjectContent(projectName);
+
+        });
         cancelBtn.addEventListener('click', closeTaskPopup);
 
-        popUpContainer.appendChild(input);
+        popUpContainer.appendChild(taskTitle);
+        // popUpContainer.appendChild(taskDescription);
+        // popUpContainer.appendChild(taskDueDate);
+        // popUpContainer.appendChild(taskPriority);
         popUpContainer.appendChild(popUpBtns);
         popUpBtns.appendChild(addBtn);
         popUpBtns.appendChild(cancelBtn);
@@ -92,10 +120,28 @@ const UI = (() => {
         popUpContainer.style.display = 'none';
     }
 
+    const addTask = (title) => {
+        const task = Task(title);
+        Storage.addTask('title', task.title);
+    }
+
+    const projectTasksCount = () => {
+
+    }
+
+    const loadTasks = (projectName) => {
+        const container = document.createElement('div');
+        container.classList.add(`tasks`);
+
+        if(projectName === 'Todos'){
+            container.textContent = Storage.getTasks('title');
+        }
+        return container;
+    }
+
     return { loadHome, 
             loadToday, 
             loadThisWeek, 
-            loadProjectContent, 
             openProjectPopup,  
             closeProjectPopup };
 })();
