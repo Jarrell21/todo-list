@@ -51,7 +51,7 @@ button {
     gap: 5px;
 }
 
-.project-popup-input, .task-popup-input {
+.project-popup-input, .task-popup-title {
     height: 2rem;
     width: 100%;
 }
