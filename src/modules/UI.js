@@ -1,33 +1,37 @@
 import Task from "./task";
 import Storage from "./Storage";
-
+import Project from "./Project";
+import TodoList from "./TodoList";
 const UI = (() => {
     const loadHome = () => {
-        loadProjectContent('Todos');
+        UI.loadProjectContent('Todos');
+        UI.closeProjectPopup();
     }
 
     const loadToday = () => {
-        loadProjectContent('Today');
+        UI.loadProjectContent('Today');
+        UI.closeProjectPopup()
     }
 
     const loadThisWeek = () => {
-        loadProjectContent('This week');
+        UI.loadProjectContent('This week');
+        UI.closeProjectPopup()
     }
 
-    const loadProjectContent = (project) => {
+    const loadProjectContent = (projectName) => {
         const content = document.querySelector('#content');
         content.innerHTML = `
-        <div id="content-title">${project}</div>`;
+        <div id="content-title">${projectName}</div>`;
 
         const contentBody = document.createElement('div');
         contentBody.setAttribute('id', 'content-body');
-        contentBody.appendChild(loadTasks(project));
+        contentBody.appendChild(loadTasks(projectName));
 
         content.appendChild(contentBody);
 
-        if (project === 'Todos'){
-            contentBody.appendChild(addTaskButton());
-            contentBody.appendChild(addTaskPopup());
+        if (projectName !== 'Today' && projectName !== 'This week'){
+            contentBody.appendChild(UI.addTaskButton());
+            contentBody.appendChild(UI.addTaskPopup(projectName));
         }
     }
 
@@ -36,14 +40,12 @@ const UI = (() => {
 
         taskBtn.classList.add("add-task-btn");
         taskBtn.textContent = 'Add Task';
-        taskBtn.addEventListener('click', openTaskPopup)
+        taskBtn.addEventListener('click', UI.openTaskPopup)
 
         return taskBtn;
     }
 
-    const addTaskPopup = () => {
-        const content = document.querySelector('#content');
-        const projectName = document.querySelector('#content-title').textContent;
+    const addTaskPopup = (projectName) => {
         const popUpContainer = document.createElement('div');
         const taskTitle = document.createElement('input');
         // const taskDescription = document.createElement('input');
@@ -66,14 +68,15 @@ const UI = (() => {
         cancelBtn.classList.add('task-popup-cancel-btn');
         
         addBtn.addEventListener('click', () => {
+            const content = document.querySelector('#content');
             const taskTitleVal = document.querySelector('.task-popup-title').value;
-            addTask(taskTitleVal);
-            closeTaskPopup()
+            Storage.addTask(projectName, Task(taskTitleVal));
+            UI.closeTaskPopup()
             content.textContent = '';
-            loadProjectContent(projectName);
+            UI.loadProjectContent(projectName);
 
         });
-        cancelBtn.addEventListener('click', closeTaskPopup);
+        cancelBtn.addEventListener('click', UI.closeTaskPopup);
 
         popUpContainer.appendChild(taskTitle);
         // popUpContainer.appendChild(taskDescription);
@@ -120,28 +123,27 @@ const UI = (() => {
         popUpContainer.style.display = 'none';
     }
 
-    const addTask = (title) => {
-        const task = Task(title);
-        Storage.addTask('title', task.title);
-    }
-
-    const projectTasksCount = () => {
-
-    }
-
     const loadTasks = (projectName) => {
         const container = document.createElement('div');
         container.classList.add(`tasks`);
 
         if(projectName === 'Todos'){
-            container.textContent = Storage.getTasks('title');
+            container.textContent = JSON.stringify(Storage.getTodoList().getProject(projectName).getTasks());
+            
+            console.log('todoList', localStorage.getItem('todoList'));
+            console.log(Storage.getTodoList());
         }
         return container;
     }
 
     return { loadHome, 
             loadToday, 
-            loadThisWeek, 
+            loadThisWeek,
+            loadProjectContent, 
+            addTaskButton,
+            addTaskPopup,
+            openTaskPopup,
+            closeTaskPopup,
             openProjectPopup,  
             closeProjectPopup };
 })();
