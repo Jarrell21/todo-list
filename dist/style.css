@@ -39,7 +39,7 @@ button {
     padding: 20px;
 }
 
-.projects {
+.project-section, .projects-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
