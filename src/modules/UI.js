@@ -3,21 +3,6 @@ import Storage from "./Storage";
 import Project from "./Project";
 import TodoList from "./TodoList";
 const UI = (() => {
-    const loadHome = () => {
-        UI.loadProjectContent('Todos');
-        UI.closeProjectPopup();
-    }
-
-    const loadToday = () => {
-        UI.loadProjectContent('Today');
-        UI.closeProjectPopup()
-    }
-
-    const loadThisWeek = () => {
-        UI.loadProjectContent('This week');
-        UI.closeProjectPopup()
-    }
-
     const loadProjectContent = (projectName) => {
         const content = document.querySelector('#content');
         content.innerHTML = `
@@ -33,6 +18,8 @@ const UI = (() => {
             contentBody.appendChild(UI.addTaskButton());
             contentBody.appendChild(UI.addTaskPopup(projectName));
         }
+
+        UI.closeProjectPopup();
     }
 
     const addTaskButton = () => {
@@ -71,9 +58,10 @@ const UI = (() => {
             const content = document.querySelector('#content');
             const taskTitleVal = document.querySelector('.task-popup-title').value;
             Storage.addTask(projectName, task(taskTitleVal));
-            UI.closeTaskPopup()
-            content.textContent = '';
-            UI.loadProjectContent(projectName);
+            UI.closeTaskPopup();
+            UI.createNewTask(taskTitleVal);
+            // content.textContent = '';
+            // UI.loadProjectContent(projectName);
 
         });
         cancelBtn.addEventListener('click', UI.closeTaskPopup);
@@ -91,6 +79,29 @@ const UI = (() => {
 
     }
 
+    const createNewTask = (task) => {
+        const container = document.querySelector('.tasks');
+        const taskDiv = document.createElement('div');
+        taskDiv.textContent = task;
+        container.appendChild(taskDiv)
+    }
+
+    const loadTasks = (projectName) => {
+        const container = document.createElement('div');
+        container.classList.add(`tasks`);
+
+        Storage.getTodoList()
+            .getProject(projectName)
+            .getTasks()
+            .forEach((task) => {
+                const newC = document.createElement('div');
+                newC.textContent = task;
+                container.appendChild(newC)
+            })
+
+        return container;
+    }
+
     const openTaskPopup = () => {
         const addTaskBtn = document.querySelector('.add-task-btn');
         const popUpContainer = document.querySelector('.task-popup');
@@ -102,9 +113,32 @@ const UI = (() => {
     const closeTaskPopup = () => {
         const addTaskBtn = document.querySelector('.add-task-btn');
         const popUpContainer = document.querySelector('.task-popup');
+        const popUpInput = document.querySelector('.task-popup-title');
 
         addTaskBtn.style.display = 'block';
         popUpContainer.style.display = 'none';
+        popUpInput.value = '';
+    }
+
+    const addProject = () => {
+        const projectName = document.querySelector('.project-popup-input').value;
+
+        Storage.addProject(Project(projectName));
+        UI.createNewProject(projectName);
+        UI.closeProjectPopup();
+    }
+
+    const createNewProject = (projectName) => {
+        const container = document.querySelector('.projects-container');
+        const button = document.createElement('button');
+
+        button.textContent = projectName;
+        button.classList.add('project');
+        button.addEventListener('click', () => {
+            UI.loadProjectContent(projectName);
+        })
+
+        container.appendChild(button);
     }
 
     const openProjectPopup = () => {
@@ -118,52 +152,38 @@ const UI = (() => {
     const closeProjectPopup = () => {
         const addProjectBtn = document.querySelector('.add-project-btn');
         const popUpContainer = document.querySelector('.project-popup');
+        const popUpInput = document.querySelector('.project-popup-input');
 
         addProjectBtn.style.display = 'block';
         popUpContainer.style.display = 'none';
+        popUpInput.value = '';
     }
 
-    const loadTasks = (projectName) => {
-        const container = document.createElement('div');
-        container.classList.add(`tasks`);
-
-        // container.textContent = JSON.stringify(Storage.getTodoList().getProject(projectName).getTasks());
-            
-        Storage.getTodoList()
-            .getProject(projectName)
-            .getTasks()
-            .forEach((task) => {
-                const newC = document.createElement('div');
-                newC.innerHTML = task.getTitle()
-                container.appendChild(newC)
-            })
-
-        return container;
-    }
-
-    return { loadHome, 
-            loadToday, 
-            loadThisWeek,
-            loadProjectContent, 
+    return { loadProjectContent, 
             addTaskButton,
             addTaskPopup,
+            createNewTask,
             openTaskPopup,
             closeTaskPopup,
+            addProject,
+            createNewProject,
             openProjectPopup,  
             closeProjectPopup };
 })();
 
-const todos = document.querySelector('#todos-btn');
-todos.addEventListener('click', UI.loadHome);
-
-const todayBtn = document.querySelector('#today-btn');
-todayBtn.addEventListener('click', UI.loadToday);
-
-const thisWeekBtn = document.querySelector('#this-week-btn');
-thisWeekBtn.addEventListener('click', UI.loadThisWeek);
+const projectBtn = document.querySelectorAll('.project-btn');
+projectBtn.forEach((btn) => {
+    const projectName = btn.textContent;
+    btn.addEventListener('click', () => {
+        UI.loadProjectContent(projectName);
+    })
+})
 
 const addProjectBtn = document.querySelector('.add-project-btn');
 addProjectBtn.addEventListener('click', UI.openProjectPopup);
+
+const projectPopupAdd = document.querySelector('.project-popup-add-btn');
+projectPopupAdd.addEventListener('click', UI.addProject);
 
 const projectPopupCancel = document.querySelector('.project-popup-cancel-btn');
 projectPopupCancel.addEventListener('click', UI.closeProjectPopup)
