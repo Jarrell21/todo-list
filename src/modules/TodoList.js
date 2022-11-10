@@ -20,7 +20,11 @@ const todoList = () => {
         projects.push(projectName);
     }
 
-    return { getProjects, getProject, addProject, setProjects }
+    const toJSON = () => {
+        return {projects};
+    }
+
+    return { projects, getProjects, getProject, addProject, setProjects }
 };
 
 export default todoList

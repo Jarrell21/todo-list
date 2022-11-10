@@ -2,19 +2,20 @@ import Project from "./Project";
 import TodoList from "./TodoList";
 import Task from "./task";
 
-const storage = (() => {
+const Storage = (() => {
     const saveTodoList = (data) => {
         localStorage.setItem('todoList', JSON.stringify(data));
 
-        const harry = Project('harry');
-        console.log(JSON.stringify(harry));
+        console.log('SAVED', JSON.stringify(data));
     }
 
     const getTodoList = () => {
+        console.log('PARSE', JSON.parse(localStorage.getItem('todoList')));
         const todoList = Object.assign(
             TodoList(),
             JSON.parse(localStorage.getItem('todoList'))
         )
+        console.log('ASSIGNED', JSON.stringify(todoList));
 
         todoList.setProjects(
             todoList
@@ -22,6 +23,7 @@ const storage = (() => {
                 .map((project) => Object.assign(Project(), project))
         )
 
+        console.log('SET', JSON.stringify(todoList));
         todoList
             .getProjects()
             .forEach((project) =>
@@ -29,21 +31,23 @@ const storage = (() => {
                     project.getTasks().map((task) => Object.assign(Task(), task))
                 )
             )
-            
-            console.log(todoList);
+
+        console.log('LOCAL', localStorage.getItem('todoList'));
+        console.log('GET', JSON.stringify(todoList));
+        
         return todoList;
     }
 
     const addProject = (project) => {
-        const todoList = storage.getTodoList();
+        const todoList = Storage.getTodoList();
         todoList.addProject(project);
-        storage.saveTodoList(todoList);
+        Storage.saveTodoList(todoList);
     }
 
     const addTask = (projectName, task) => {
-        const todoList = storage.getTodoList();
+        const todoList = Storage.getTodoList();
         todoList.getProject(projectName).addTask(task);
-        storage.saveTodoList(todoList);
+        Storage.saveTodoList(todoList);
     }
 
 
@@ -51,4 +55,4 @@ const storage = (() => {
 
 })();
 
-export default storage;
+export default Storage;

@@ -9,10 +9,11 @@ const task = (title) => {
     //     return `${month}/${day}/${year}`
     // }
 
-    const toJSON = () => getTitle();
+    const toJSON = () => {
+        return {title};
+    }
 
-
-    return { getTitle, toJSON };
+    return { getTitle, title };
 
 };
 
