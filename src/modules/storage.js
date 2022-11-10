@@ -1,9 +1,13 @@
 import Project from "./Project";
 import TodoList from "./TodoList";
 import Task from "./task";
+
 const storage = (() => {
     const saveTodoList = (data) => {
         localStorage.setItem('todoList', JSON.stringify(data));
+
+        const harry = Project('harry');
+        console.log(JSON.stringify(harry));
     }
 
     const getTodoList = () => {
@@ -26,6 +30,7 @@ const storage = (() => {
                 )
             )
             
+            console.log(todoList);
         return todoList;
     }
 
@@ -38,14 +43,11 @@ const storage = (() => {
     const addTask = (projectName, task) => {
         const todoList = storage.getTodoList();
         todoList.getProject(projectName).addTask(task);
-        storage.saveTodoList(todoList)
+        storage.saveTodoList(todoList);
     }
 
-    const getTasks = (key) => {
-        return localStorage.getItem(key);
-    }
 
-    return { getTodoList ,getTasks,  saveTodoList, addTask, addProject };
+    return { getTodoList,  saveTodoList, addTask, addProject };
 
 })();
 

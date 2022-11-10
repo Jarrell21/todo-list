@@ -1,4 +1,4 @@
-import Task from "./task";
+import task from "./task";
 import Storage from "./Storage";
 import Project from "./Project";
 import TodoList from "./TodoList";
@@ -70,7 +70,7 @@ const UI = (() => {
         addBtn.addEventListener('click', () => {
             const content = document.querySelector('#content');
             const taskTitleVal = document.querySelector('.task-popup-title').value;
-            Storage.addTask(projectName, Task(taskTitleVal));
+            Storage.addTask(projectName, task(taskTitleVal));
             UI.closeTaskPopup()
             content.textContent = '';
             UI.loadProjectContent(projectName);
@@ -127,12 +127,17 @@ const UI = (() => {
         const container = document.createElement('div');
         container.classList.add(`tasks`);
 
-        if(projectName === 'Todos'){
-            container.textContent = JSON.stringify(Storage.getTodoList().getProject(projectName).getTasks());
+        // container.textContent = JSON.stringify(Storage.getTodoList().getProject(projectName).getTasks());
             
-            console.log('todoList', localStorage.getItem('todoList'));
-            console.log(Storage.getTodoList());
-        }
+        Storage.getTodoList()
+            .getProject(projectName)
+            .getTasks()
+            .forEach((task) => {
+                const newC = document.createElement('div');
+                newC.innerHTML = task.getTitle()
+                container.appendChild(newC)
+            })
+
         return container;
     }
 

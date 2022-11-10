@@ -17,8 +17,7 @@ const todoList = () => {
     }
 
     const addProject = (projectName) => {
-        const newProject = Project(projectName)
-        projects.push(newProject);
+        projects.push(projectName);
     }
 
     return { getProjects, getProject, addProject, setProjects }
