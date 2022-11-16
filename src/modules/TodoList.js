@@ -1,4 +1,4 @@
-import Project from "./Project";
+import Project from "./project";
 const todoList = () => {
     let projects = [];
 
@@ -21,10 +21,12 @@ const todoList = () => {
     }
 
     const toJSON = () => {
-        return {projects};
+        return {
+            projects: getProjects()
+        };
     }
 
-    return { projects, getProjects, getProject, addProject, setProjects }
+    return { toJSON, getProjects, getProject, addProject, setProjects }
 };
 
 export default todoList

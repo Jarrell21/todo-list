@@ -1,7 +1,9 @@
-import Task from './Task'
-
 const project = (projectName) => {
     const getName = () => projectName;
+
+    const setName = (newName) => {
+        projectName = newName;
+    } 
 
     let tasks = [];
 
@@ -17,11 +19,12 @@ const project = (projectName) => {
 
     const toJSON = () => {
         return {
-            projectName, tasks
+            projectName: getName(), 
+            tasks: getTasks()
         }
     }
 
-    return {projectName, tasks, setTasks, getName, getTasks,  addTask };
+    return {toJSON, setTasks, getName, setName, getTasks,  addTask };
 };
 
 export default project;

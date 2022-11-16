@@ -2,6 +2,10 @@ const task = (title) => {
 
     const getTitle = () => title;
 
+    const setTitle = (newTitle) => {
+        title = newTitle
+    }
+
     // const getDateFormatted = () => {
     //     const day = dueDate.split('/')[0]
     //     const month = dueDate.split('/')[1]
@@ -10,10 +14,12 @@ const task = (title) => {
     // }
 
     const toJSON = () => {
-        return {title};
+        return  {
+            title: getTitle()
+        }
     }
 
-    return { getTitle, title };
+    return { getTitle, setTitle, toJSON };
 
 };
 
