@@ -1,7 +1,7 @@
 import task from "./task";
 import Storage from "./Storage";
-import Project from "./Project";
-import TodoList from "./TodoList";
+import Project from "./project";
+import TodoList from "./todoList";
 const UI = (() => {
     const loadProjectContent = (projectName) => {
         const content = document.querySelector('#content');
@@ -91,14 +91,14 @@ const UI = (() => {
         container.classList.add(`tasks`);
 
         Storage.getTodoList()
-            .getProject(projectName)
-            .getTasks()
-            .forEach((task) => {
-                const newC = document.createElement('div');
-                newC.textContent = task;
-                container.appendChild(newC)
-            })
-
+        .getProject(projectName)
+        .getTasks()
+        .forEach((task) => {
+            const newC = document.createElement('div');
+            newC.textContent = task.title;
+            container.appendChild(newC)
+        })
+        
         return container;
     }
 
