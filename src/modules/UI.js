@@ -1,4 +1,4 @@
-import task from "./task";
+import Task from "./task";
 import Storage from "./Storage";
 import Project from "./project";
 import TodoList from "./todoList";
@@ -6,23 +6,24 @@ const UI = (() => {
     const loadProjectContent = (projectName) => {
         const content = document.querySelector('#content');
         content.innerHTML = `
-        <div id="content-title">${projectName}</div>`;
+        <div id="content-title">${projectName}</div>
+        <div id="content-body"></div>`;
 
-        const contentBody = document.createElement('div');
-        contentBody.setAttribute('id', 'content-body');
-        contentBody.appendChild(loadTasks(projectName));
+        const contentBody = document.querySelector('#content-body');
 
-        content.appendChild(contentBody);
+        contentBody.appendChild(UI.loadTasks(projectName));
 
         if (projectName !== 'Today' && projectName !== 'This week'){
-            contentBody.appendChild(UI.addTaskButton());
-            contentBody.appendChild(UI.addTaskPopup(projectName));
+            contentBody.appendChild(UI.createAddTaskButton());
+            contentBody.appendChild(UI.createAddTaskPopup(projectName));
         }
 
+        UI.loadProjects();
         UI.closeProjectPopup();
+        
     }
 
-    const addTaskButton = () => {
+    const createAddTaskButton = () => {
         const taskBtn = document.createElement('button');
 
         taskBtn.classList.add("add-task-btn");
@@ -32,7 +33,7 @@ const UI = (() => {
         return taskBtn;
     }
 
-    const addTaskPopup = (projectName) => {
+    const createAddTaskPopup = (projectName) => {
         const popUpContainer = document.createElement('div');
         const taskTitle = document.createElement('input');
         // const taskDescription = document.createElement('input');
@@ -55,14 +56,8 @@ const UI = (() => {
         cancelBtn.classList.add('task-popup-cancel-btn');
         
         addBtn.addEventListener('click', () => {
-            const content = document.querySelector('#content');
             const taskTitleVal = document.querySelector('.task-popup-title').value;
-            Storage.addTask(projectName, task(taskTitleVal));
-            UI.closeTaskPopup();
-            UI.createNewTask(taskTitleVal);
-            // content.textContent = '';
-            // UI.loadProjectContent(projectName);
-
+            UI.addTask(projectName, taskTitleVal);
         });
         cancelBtn.addEventListener('click', UI.closeTaskPopup);
 
@@ -77,6 +72,12 @@ const UI = (() => {
 
         return popUpContainer;
 
+    }
+
+    const addTask = (projectName, task) => {
+        Storage.addTask(projectName, Task(task));
+        UI.closeTaskPopup();
+        UI.createNewTask(task);
     }
 
     const createNewTask = (task) => {
@@ -98,7 +99,7 @@ const UI = (() => {
             newC.textContent = task.title;
             container.appendChild(newC)
         })
-        
+
         return container;
     }
 
@@ -141,6 +142,28 @@ const UI = (() => {
         container.appendChild(button);
     }
 
+    const loadProjects = () => {
+        const container = document.querySelector('.projects-container');
+
+        container.textContent = '';
+        Storage.getTodoList()
+            .getProjects()
+            .forEach((project) => {
+                if(project.getName() !== 'Todos' &&
+                project.getName() != 'Today' &&
+                project.getName() != 'This week'){
+                    const button = document.createElement('button');
+                    
+                    button.textContent = project.getName();
+                    button.classList.add('project-btn')
+                    button.addEventListener('click',()=>{
+                        UI.loadProjectContent(project.getName())
+                    })
+                    container.appendChild(button);
+                }
+            })
+    }
+
     const openProjectPopup = () => {
         const addProjectBtn = document.querySelector('.add-project-btn');
         const popUpContainer = document.querySelector('.project-popup');
@@ -160,13 +183,16 @@ const UI = (() => {
     }
 
     return { loadProjectContent, 
-            addTaskButton,
-            addTaskPopup,
+            createAddTaskButton,
+            createAddTaskPopup,
+            addTask,
             createNewTask,
+            loadTasks,
             openTaskPopup,
             closeTaskPopup,
             addProject,
             createNewProject,
+            loadProjects,
             openProjectPopup,  
             closeProjectPopup };
 })();
