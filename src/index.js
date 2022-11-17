@@ -1,3 +1,3 @@
 import UI from "./modules/UI";
 
-document.addEventListener('DOMContentLoaded', UI.loadProjectContent('Todos'));
+document.addEventListener('DOMContentLoaded', UI.loadProjectContent('Home'));

@@ -91,14 +91,16 @@ const UI = (() => {
         const container = document.createElement('div');
         container.classList.add(`tasks`);
 
-        Storage.getTodoList()
-        .getProject(projectName)
-        .getTasks()
-        .forEach((task) => {
-            const newC = document.createElement('div');
-            newC.textContent = task.title;
-            container.appendChild(newC)
-        })
+        if(localStorage.getItem('todoList') !== null){
+            Storage.getTodoList()
+                .getProject(projectName)
+                .getTasks()
+                .forEach((task) => {
+                    const taskDiv = document.createElement('div');
+                    taskDiv.textContent = task.title;
+                    container.appendChild(taskDiv)
+                })
+        }
 
         return container;
     }
@@ -149,7 +151,7 @@ const UI = (() => {
         Storage.getTodoList()
             .getProjects()
             .forEach((project) => {
-                if(project.getName() !== 'Todos' &&
+                if(project.getName() !== 'Home' &&
                 project.getName() != 'Today' &&
                 project.getName() != 'This week'){
                     const button = document.createElement('button');
