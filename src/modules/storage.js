@@ -39,8 +39,6 @@ const Storage = (() => {
                         .getTasks()
                         .forEach((task) => task.setTitle(task.title))
                 })
-                console.log('after set', todoList);
-
         } else {
             todoList.setProjects(
                 todoList
