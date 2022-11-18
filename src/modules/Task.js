@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 const task = (title, dueDate) => {
   const getTitle = () => title;
 
@@ -11,19 +13,19 @@ const task = (title, dueDate) => {
     dueDate = newDueDate;
   };
 
-  //   const getDateFormatted = () => {
-  //     const day = dueDate.split('/')[0];
-  //     const month = dueDate.split('/')[1];
-  //     const year = dueDate.split('/')[2];
-  //     return `${month}/${day}/${year}`;
-  //   };
+  const getDateFormatted = () => {
+    const year = dueDate.split('-')[0];
+    const month = dueDate.split('-')[1];
+    const day = dueDate.split('-')[2];
+    return `${month}/${day}/${year}`;
+  };
 
   const toJSON = () => ({
     title: getTitle(),
     dueDate: getDate(),
   });
 
-  return { getTitle, setTitle, getDate, setDate, toJSON };
+  return { getTitle, setTitle, getDate, setDate, toJSON, getDateFormatted };
 };
 
 export default task;
