@@ -65,3 +65,8 @@ button {
     width: 80%;
     padding: 20px;
 }
+
+.task {
+    display: flex;
+    gap: 5px;
+}
