@@ -1,26 +1,29 @@
-const task = (title) => {
+const task = (title, dueDate) => {
+  const getTitle = () => title;
 
-    const getTitle = () => title;
+  const getDate = () => dueDate;
 
-    const setTitle = (newTitle) => {
-        title = newTitle
-    }
+  const setTitle = (newTitle) => {
+    title = newTitle;
+  };
 
-    // const getDateFormatted = () => {
-    //     const day = dueDate.split('/')[0]
-    //     const month = dueDate.split('/')[1]
-    //     const year = dueDate.split('/')[2]
-    //     return `${month}/${day}/${year}`
-    // }
+  const setDate = (newDueDate) => {
+    dueDate = newDueDate;
+  };
 
-    const toJSON = () => {
-        return  {
-            title: getTitle()
-        }
-    }
+  //   const getDateFormatted = () => {
+  //     const day = dueDate.split('/')[0];
+  //     const month = dueDate.split('/')[1];
+  //     const year = dueDate.split('/')[2];
+  //     return `${month}/${day}/${year}`;
+  //   };
 
-    return { getTitle, setTitle, toJSON };
+  const toJSON = () => ({
+    title: getTitle(),
+    dueDate: getDate(),
+  });
 
+  return { getTitle, setTitle, getDate, setDate, toJSON };
 };
 
 export default task;

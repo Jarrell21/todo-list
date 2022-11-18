@@ -1,211 +1,246 @@
-import Task from "./task";
-import Storage from "./Storage";
-import Project from "./project";
-import TodoList from "./todoList";
+import Task from './task';
+import Storage from './Storage';
+import Project from './project';
+import TodoList from './todoList';
+
 const UI = (() => {
-    const loadProjectContent = (projectName) => {
-        const content = document.querySelector('#content');
-        content.innerHTML = `
+  const loadProjectContent = (projectName) => {
+    const content = document.querySelector('#content');
+    content.innerHTML = `
         <div id="content-title">${projectName}</div>
         <div id="content-body"></div>`;
 
-        const contentBody = document.querySelector('#content-body');
+    const contentBody = document.querySelector('#content-body');
 
-        contentBody.appendChild(UI.loadTasks(projectName));
+    contentBody.appendChild(UI.loadTasks(projectName));
 
-        if (projectName !== 'Today' && projectName !== 'This week'){
-            contentBody.appendChild(UI.createAddTaskButton());
-            contentBody.appendChild(UI.createAddTaskPopup(projectName));
-        }
-
-        UI.loadProjects();
-        UI.closeProjectPopup();
-        
+    if (projectName !== 'Today' && projectName !== 'This week') {
+      contentBody.appendChild(UI.createAddTaskButton());
+      contentBody.appendChild(UI.createAddTaskPopup(projectName));
     }
 
-    const createAddTaskButton = () => {
-        const taskBtn = document.createElement('button');
+    UI.loadProjects();
+    UI.closeProjectPopup();
+  };
 
-        taskBtn.classList.add("add-task-btn");
-        taskBtn.textContent = 'Add Task';
-        taskBtn.addEventListener('click', UI.openTaskPopup)
+  const createAddTaskButton = () => {
+    const taskBtn = document.createElement('button');
 
-        return taskBtn;
+    taskBtn.classList.add('add-task-btn');
+    taskBtn.textContent = 'Add Task';
+    taskBtn.addEventListener('click', UI.openTaskPopup);
+
+    return taskBtn;
+  };
+
+  const createAddTaskPopup = (projectName) => {
+    const popUpContainer = document.createElement('div');
+    const taskTitle = document.createElement('input');
+    const taskDueDate = document.createElement('input');
+    // const taskDescription = document.createElement('input');
+    // const taskPriority = document.createElement('input');
+    const popUpBtns = document.createElement('div');
+    const addBtn = document.createElement('button');
+    const cancelBtn = document.createElement('button');
+
+    addBtn.textContent = 'ADD';
+    cancelBtn.textContent = 'CANCEL';
+    taskTitle.setAttribute('placeholder', 'Title');
+    taskDueDate.setAttribute('type', 'date');
+
+    popUpContainer.classList.add('task-popup');
+    taskTitle.classList.add('task-popup-title');
+    taskDueDate.classList.add('task-popup-date');
+    // taskDescription.classList.add('task-popup-desc');
+    // taskPriority.classList.add('task-popup-priority');
+    popUpBtns.classList.add('task-popup-btns');
+    addBtn.classList.add('task-popup-add-btn');
+    cancelBtn.classList.add('task-popup-cancel-btn');
+
+    addBtn.addEventListener('click', () => {
+      UI.addTask(projectName);
+    });
+    cancelBtn.addEventListener('click', UI.closeTaskPopup);
+
+    popUpContainer.appendChild(taskTitle);
+    popUpContainer.appendChild(taskDueDate);
+    // popUpContainer.appendChild(taskDescription);
+    // popUpContainer.appendChild(taskPriority);
+    popUpContainer.appendChild(popUpBtns);
+    popUpBtns.appendChild(addBtn);
+    popUpBtns.appendChild(cancelBtn);
+    popUpContainer.style.display = 'none';
+
+    return popUpContainer;
+  };
+
+  const addTask = (projectName) => {
+    const taskTitle = document.querySelector('.task-popup-title').value;
+    const taskDueDate = document.querySelector('.task-popup-date').value;
+    const newTask = Task(taskTitle, taskDueDate);
+
+    if (taskTitle == '' || taskDueDate == '') {
+      alert('Fields must be complete');
+      return;
     }
 
-    const createAddTaskPopup = (projectName) => {
-        const popUpContainer = document.createElement('div');
-        const taskTitle = document.createElement('input');
-        // const taskDescription = document.createElement('input');
-        // const taskDueDate = document.createElement('input');
-        // const taskPriority = document.createElement('input');
-        const popUpBtns = document.createElement('div');
-        const addBtn = document.createElement('button');
-        const cancelBtn = document.createElement('button');
+    Storage.addTask(projectName, newTask);
+    UI.closeTaskPopup();
+    UI.createNewTask(newTask);
+  };
 
-        addBtn.textContent = 'ADD';
-        cancelBtn.textContent = 'CANCEL';
+  const createNewTask = (task) => {
+    const container = document.querySelector('.tasks');
+    const taskDiv = document.createElement('div');
+    const taskCheckbox = document.createElement('input');
+    const taskTitle = document.createElement('p');
+    const taskDueDate = document.createElement('p');
 
-        popUpContainer.classList.add('task-popup');
-        taskTitle.classList.add('task-popup-title');
-        // taskDescription.classList.add('task-popup-desc');
-        // taskDueDate.classList.add('task-popup-date');
-        // taskPriority.classList.add('task-popup-priority');
-        popUpBtns.classList.add('task-popup-btns');
-        addBtn.classList.add('task-popup-add-btn');
-        cancelBtn.classList.add('task-popup-cancel-btn');
-        
-        addBtn.addEventListener('click', () => {
-            const taskTitleVal = document.querySelector('.task-popup-title').value;
-            UI.addTask(projectName, taskTitleVal);
+    taskDiv.classList.add('task');
+    taskCheckbox.setAttribute('type', 'checkbox');
+    taskTitle.textContent = task.getTitle();
+    taskDueDate.textContent = task.getDate();
+
+    taskDiv.appendChild(taskCheckbox);
+    taskDiv.appendChild(taskTitle);
+    taskDiv.appendChild(taskDueDate);
+    container.appendChild(taskDiv);
+  };
+
+  const loadTasks = (projectName) => {
+    const container = document.createElement('div');
+    container.classList.add(`tasks`);
+
+    if (localStorage.getItem('todoList') !== null) {
+      Storage.getTodoList()
+        .getProject(projectName)
+        .getTasks()
+        .forEach((task) => {
+          const taskDiv = document.createElement('div');
+          const taskCheckbox = document.createElement('input');
+          const taskTitle = document.createElement('p');
+          const taskDueDate = document.createElement('p');
+
+          taskDiv.classList.add('task');
+          taskCheckbox.setAttribute('type', 'checkbox');
+          taskTitle.textContent = task.getTitle();
+          taskDueDate.textContent = task.getDate();
+
+          taskDiv.appendChild(taskCheckbox);
+          taskDiv.appendChild(taskTitle);
+          taskDiv.appendChild(taskDueDate);
+          container.appendChild(taskDiv);
         });
-        cancelBtn.addEventListener('click', UI.closeTaskPopup);
-
-        popUpContainer.appendChild(taskTitle);
-        // popUpContainer.appendChild(taskDescription);
-        // popUpContainer.appendChild(taskDueDate);
-        // popUpContainer.appendChild(taskPriority);
-        popUpContainer.appendChild(popUpBtns);
-        popUpBtns.appendChild(addBtn);
-        popUpBtns.appendChild(cancelBtn);
-        popUpContainer.style.display = 'none';
-
-        return popUpContainer;
-
     }
 
-    const addTask = (projectName, task) => {
-        Storage.addTask(projectName, Task(task));
-        UI.closeTaskPopup();
-        UI.createNewTask(task);
-    }
+    return container;
+  };
 
-    const createNewTask = (task) => {
-        const container = document.querySelector('.tasks');
-        const taskDiv = document.createElement('div');
-        taskDiv.textContent = task;
-        container.appendChild(taskDiv)
-    }
+  const openTaskPopup = () => {
+    const addTaskBtn = document.querySelector('.add-task-btn');
+    const popUpContainer = document.querySelector('.task-popup');
 
-    const loadTasks = (projectName) => {
-        const container = document.createElement('div');
-        container.classList.add(`tasks`);
+    addTaskBtn.style.display = 'none';
+    popUpContainer.style.display = 'flex';
+  };
 
-        if(localStorage.getItem('todoList') !== null){
-            Storage.getTodoList()
-                .getProject(projectName)
-                .getTasks()
-                .forEach((task) => {
-                    const taskDiv = document.createElement('div');
-                    taskDiv.textContent = task.title;
-                    container.appendChild(taskDiv)
-                })
+  const closeTaskPopup = () => {
+    const addTaskBtn = document.querySelector('.add-task-btn');
+    const popUpContainer = document.querySelector('.task-popup');
+    const popUpInput = document.querySelector('.task-popup-title');
+
+    addTaskBtn.style.display = 'block';
+    popUpContainer.style.display = 'none';
+    popUpInput.value = '';
+  };
+
+  const addProject = () => {
+    const projectName = document.querySelector('.project-popup-input').value;
+
+    Storage.addProject(Project(projectName));
+    UI.createNewProject(projectName);
+    UI.closeProjectPopup();
+  };
+
+  const createNewProject = (projectName) => {
+    const container = document.querySelector('.projects-container');
+    const button = document.createElement('button');
+
+    button.textContent = projectName;
+    button.classList.add('project');
+    button.addEventListener('click', () => {
+      UI.loadProjectContent(projectName);
+    });
+
+    container.appendChild(button);
+  };
+
+  const loadProjects = () => {
+    const container = document.querySelector('.projects-container');
+
+    container.textContent = '';
+    Storage.getTodoList()
+      .getProjects()
+      .forEach((project) => {
+        if (
+          project.getName() !== 'Home' &&
+          project.getName() != 'Today' &&
+          project.getName() != 'This week'
+        ) {
+          const button = document.createElement('button');
+
+          button.textContent = project.getName();
+          button.classList.add('project-btn');
+          button.addEventListener('click', () => {
+            UI.loadProjectContent(project.getName());
+          });
+          container.appendChild(button);
         }
+      });
+  };
 
-        return container;
-    }
+  const openProjectPopup = () => {
+    const addProjectBtn = document.querySelector('.add-project-btn');
+    const popUpContainer = document.querySelector('.project-popup');
 
-    const openTaskPopup = () => {
-        const addTaskBtn = document.querySelector('.add-task-btn');
-        const popUpContainer = document.querySelector('.task-popup');
+    addProjectBtn.style.display = 'none';
+    popUpContainer.style.display = 'flex';
+  };
 
-        addTaskBtn.style.display = 'none';
-        popUpContainer.style.display = 'flex';
-    }
+  const closeProjectPopup = () => {
+    const addProjectBtn = document.querySelector('.add-project-btn');
+    const popUpContainer = document.querySelector('.project-popup');
+    const popUpInput = document.querySelector('.project-popup-input');
 
-    const closeTaskPopup = () => {
-        const addTaskBtn = document.querySelector('.add-task-btn');
-        const popUpContainer = document.querySelector('.task-popup');
-        const popUpInput = document.querySelector('.task-popup-title');
+    addProjectBtn.style.display = 'block';
+    popUpContainer.style.display = 'none';
+    popUpInput.value = '';
+  };
 
-        addTaskBtn.style.display = 'block';
-        popUpContainer.style.display = 'none';
-        popUpInput.value = '';
-    }
-
-    const addProject = () => {
-        const projectName = document.querySelector('.project-popup-input').value;
-
-        Storage.addProject(Project(projectName));
-        UI.createNewProject(projectName);
-        UI.closeProjectPopup();
-    }
-
-    const createNewProject = (projectName) => {
-        const container = document.querySelector('.projects-container');
-        const button = document.createElement('button');
-
-        button.textContent = projectName;
-        button.classList.add('project');
-        button.addEventListener('click', () => {
-            UI.loadProjectContent(projectName);
-        })
-
-        container.appendChild(button);
-    }
-
-    const loadProjects = () => {
-        const container = document.querySelector('.projects-container');
-
-        container.textContent = '';
-        Storage.getTodoList()
-            .getProjects()
-            .forEach((project) => {
-                if(project.getName() !== 'Home' &&
-                project.getName() != 'Today' &&
-                project.getName() != 'This week'){
-                    const button = document.createElement('button');
-                    
-                    button.textContent = project.getName();
-                    button.classList.add('project-btn')
-                    button.addEventListener('click',()=>{
-                        UI.loadProjectContent(project.getName())
-                    })
-                    container.appendChild(button);
-                }
-            })
-    }
-
-    const openProjectPopup = () => {
-        const addProjectBtn = document.querySelector('.add-project-btn');
-        const popUpContainer = document.querySelector('.project-popup');
-
-        addProjectBtn.style.display = 'none';
-        popUpContainer.style.display = 'flex';
-    }
-
-    const closeProjectPopup = () => {
-        const addProjectBtn = document.querySelector('.add-project-btn');
-        const popUpContainer = document.querySelector('.project-popup');
-        const popUpInput = document.querySelector('.project-popup-input');
-
-        addProjectBtn.style.display = 'block';
-        popUpContainer.style.display = 'none';
-        popUpInput.value = '';
-    }
-
-    return { loadProjectContent, 
-            createAddTaskButton,
-            createAddTaskPopup,
-            addTask,
-            createNewTask,
-            loadTasks,
-            openTaskPopup,
-            closeTaskPopup,
-            addProject,
-            createNewProject,
-            loadProjects,
-            openProjectPopup,  
-            closeProjectPopup };
+  return {
+    loadProjectContent,
+    createAddTaskButton,
+    createAddTaskPopup,
+    addTask,
+    createNewTask,
+    loadTasks,
+    openTaskPopup,
+    closeTaskPopup,
+    addProject,
+    createNewProject,
+    loadProjects,
+    openProjectPopup,
+    closeProjectPopup,
+  };
 })();
 
 const projectBtn = document.querySelectorAll('.project-btn');
 projectBtn.forEach((btn) => {
-    const projectName = btn.textContent;
-    btn.addEventListener('click', () => {
-        UI.loadProjectContent(projectName);
-    })
-})
+  const projectName = btn.textContent;
+  btn.addEventListener('click', () => {
+    UI.loadProjectContent(projectName);
+  });
+});
 
 const addProjectBtn = document.querySelector('.add-project-btn');
 addProjectBtn.addEventListener('click', UI.openProjectPopup);
@@ -214,7 +249,6 @@ const projectPopupAdd = document.querySelector('.project-popup-add-btn');
 projectPopupAdd.addEventListener('click', UI.addProject);
 
 const projectPopupCancel = document.querySelector('.project-popup-cancel-btn');
-projectPopupCancel.addEventListener('click', UI.closeProjectPopup)
-
+projectPopupCancel.addEventListener('click', UI.closeProjectPopup);
 
 export default UI;
