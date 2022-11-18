@@ -75,36 +75,40 @@ const UI = (() => {
   };
 
   const addTask = (projectName) => {
+    const container = document.querySelector('.tasks');
     const taskTitle = document.querySelector('.task-popup-title').value;
     const taskDueDate = document.querySelector('.task-popup-date').value;
     const newTask = Task(taskTitle, taskDueDate);
 
-    if (taskTitle == '' || taskDueDate == '') {
+    if (taskTitle === '' || taskDueDate === '') {
       alert('Fields must be complete');
       return;
     }
 
     Storage.addTask(projectName, newTask);
     UI.closeTaskPopup();
-    UI.createNewTask(newTask);
+    container.appendChild(UI.createNewTask(newTask));
   };
 
   const createNewTask = (task) => {
-    const container = document.querySelector('.tasks');
     const taskDiv = document.createElement('div');
     const taskCheckbox = document.createElement('input');
     const taskTitle = document.createElement('p');
     const taskDueDate = document.createElement('p');
+    const deleteTaskBtn = document.createElement('button');
 
     taskDiv.classList.add('task');
     taskCheckbox.setAttribute('type', 'checkbox');
     taskTitle.textContent = task.getTitle();
-    taskDueDate.textContent = task.getDate();
+    taskDueDate.textContent = task.getDateFormatted();
+    deleteTaskBtn.textContent = 'X';
 
     taskDiv.appendChild(taskCheckbox);
     taskDiv.appendChild(taskTitle);
     taskDiv.appendChild(taskDueDate);
-    container.appendChild(taskDiv);
+    taskDiv.appendChild(deleteTaskBtn);
+
+    return taskDiv;
   };
 
   const loadTasks = (projectName) => {
@@ -116,20 +120,7 @@ const UI = (() => {
         .getProject(projectName)
         .getTasks()
         .forEach((task) => {
-          const taskDiv = document.createElement('div');
-          const taskCheckbox = document.createElement('input');
-          const taskTitle = document.createElement('p');
-          const taskDueDate = document.createElement('p');
-
-          taskDiv.classList.add('task');
-          taskCheckbox.setAttribute('type', 'checkbox');
-          taskTitle.textContent = task.getTitle();
-          taskDueDate.textContent = task.getDate();
-
-          taskDiv.appendChild(taskCheckbox);
-          taskDiv.appendChild(taskTitle);
-          taskDiv.appendChild(taskDueDate);
-          container.appendChild(taskDiv);
+          container.appendChild(UI.createNewTask(task));
         });
     }
 
@@ -147,32 +138,33 @@ const UI = (() => {
   const closeTaskPopup = () => {
     const addTaskBtn = document.querySelector('.add-task-btn');
     const popUpContainer = document.querySelector('.task-popup');
-    const popUpInput = document.querySelector('.task-popup-title');
+    const popUpInput = document.querySelectorAll('.task-popup>input');
 
     addTaskBtn.style.display = 'block';
     popUpContainer.style.display = 'none';
-    popUpInput.value = '';
+    popUpInput.forEach((input) => (input.value = null));
   };
 
   const addProject = () => {
+    const container = document.querySelector('.projects-container');
     const projectName = document.querySelector('.project-popup-input').value;
+    const newProject = Project(projectName);
 
-    Storage.addProject(Project(projectName));
-    UI.createNewProject(projectName);
+    Storage.addProject(newProject);
+    container.appendChild(UI.createNewProject(newProject));
     UI.closeProjectPopup();
   };
 
-  const createNewProject = (projectName) => {
-    const container = document.querySelector('.projects-container');
+  const createNewProject = (project) => {
     const button = document.createElement('button');
 
-    button.textContent = projectName;
-    button.classList.add('project');
+    button.textContent = project.getName();
+    button.classList.add('project-btn');
     button.addEventListener('click', () => {
-      UI.loadProjectContent(projectName);
+      UI.loadProjectContent(project.getName());
     });
 
-    container.appendChild(button);
+    return button;
   };
 
   const loadProjects = () => {
@@ -184,17 +176,10 @@ const UI = (() => {
       .forEach((project) => {
         if (
           project.getName() !== 'Home' &&
-          project.getName() != 'Today' &&
-          project.getName() != 'This week'
+          project.getName() !== 'Today' &&
+          project.getName() !== 'This week'
         ) {
-          const button = document.createElement('button');
-
-          button.textContent = project.getName();
-          button.classList.add('project-btn');
-          button.addEventListener('click', () => {
-            UI.loadProjectContent(project.getName());
-          });
-          container.appendChild(button);
+          container.appendChild(UI.createNewProject(project));
         }
       });
   };
