@@ -1,30 +1,28 @@
 const project = (projectName) => {
-    const getName = () => projectName;
+  const getName = () => projectName;
 
-    const setName = (newName) => {
-        projectName = newName;
-    } 
+  const setName = (newName) => {
+    projectName = newName;
+  };
 
-    let tasks = [];
+  let tasks = [];
 
-    const setTasks = (newTasks) => {
-        tasks = newTasks;
-    }
+  const setTasks = (newTasks) => {
+    tasks = newTasks;
+  };
 
-    const getTasks = () => tasks;
+  const getTasks = () => tasks;
 
-    const addTask = (newTask) => {
-        tasks.push(newTask);
-    }
+  const addTask = (newTask) => {
+    tasks.push(newTask);
+  };
 
-    const toJSON = () => {
-        return {
-            projectName: getName(), 
-            tasks: getTasks()
-        }
-    }
+  const toJSON = () => ({
+    projectName: getName(),
+    tasks: getTasks(),
+  });
 
-    return {toJSON, setTasks, getName, setName, getTasks,  addTask };
+  return { toJSON, setTasks, getName, setName, getTasks, addTask };
 };
 
 export default project;

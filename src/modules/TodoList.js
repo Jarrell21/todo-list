@@ -1,4 +1,5 @@
-import Project from "./project";
+import Project from './project';
+
 const todoList = () => {
     let projects = [];
 
@@ -7,26 +8,23 @@ const todoList = () => {
     projects.push(Project('This week'));
 
     const setProjects = (newProjects) => {
-        projects = newProjects
-    }
+        projects = newProjects;
+    };
 
     const getProjects = () => projects;
 
-    const getProject = (projectName) => {
-        return projects.find((project) => project.getName() === projectName);
-    }
+    const getProject = (projectName) =>
+        projects.find((project) => project.getName() === projectName);
 
     const addProject = (projectName) => {
         projects.push(projectName);
-    }
+    };
 
-    const toJSON = () => {
-        return {
-            projects: getProjects()
-        };
-    }
+    const toJSON = () => ({
+        projects: getProjects(),
+    });
 
-    return { toJSON, getProjects, getProject, addProject, setProjects }
+    return { toJSON, getProjects, getProject, addProject, setProjects };
 };
 
-export default todoList
+export default todoList;
