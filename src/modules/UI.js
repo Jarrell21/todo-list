@@ -101,17 +101,32 @@ const UI = (() => {
   };
 
   const createNewTask = (task) => {
-    const container = document.querySelector('.tasks-list');
+    const tasksList = document.querySelector('.tasks-list');
+    const projectName = document.querySelector('#content-title').textContent;
+    const taskStatus = Storage.getTodoList()
+      .getProject(projectName)
+      .getTask(task.getTitle())
+      .getStatus();
 
-    container.innerHTML += `
-      <div class="task">
-        <input type="checkbox" class="task-checkbox">
+    const taskContainer = document.createElement('div');
+    taskContainer.classList.add('task');
+
+    if (taskStatus === 'ongoing') {
+      taskContainer.classList.remove('completed');
+      taskContainer.innerHTML += `<input type="checkbox" class="task-checkbox">`;
+    } else {
+      taskContainer.classList.add('completed');
+      taskContainer.innerHTML += `<input type="checkbox" class="task-checkbox" checked>`;
+    }
+
+    taskContainer.innerHTML += `
         <p>${task.getTitle()}</p>
         <p>${task.getDateFormatted()}</p>
         <button class="edit-task-btn">Edit</button>
         <button class="delete-task-btn">Delete</button>
-      </div>
       `;
+
+    tasksList.appendChild(taskContainer);
 
     UI.initTaskButtons();
   };
@@ -250,7 +265,8 @@ const UI = (() => {
     const projectName = document.querySelector('#content-title').textContent;
     const taskTitle = document.querySelector('.task-popup-title').value;
     const taskDueDate = document.querySelector('.task-popup-date').value;
-    const newTask = Task(taskTitle, taskDueDate);
+    const taskStatus = 'ongoing';
+    const newTask = Task(taskTitle, taskDueDate, taskStatus);
 
     if (taskTitle === '' || taskDueDate === '') {
       alert('Fields must be complete');
@@ -271,11 +287,31 @@ const UI = (() => {
   const deleteTask = (e) => {
     const projectName = document.querySelector('#content-title').textContent;
     const taskTitle = e.target.parentNode.children[1].textContent;
+
     Storage.deleteTask(projectName, taskTitle);
-    e.target.parentNode.remove();
+    UI.clearTasks();
+    UI.loadTasks(projectName);
   };
 
-  const changeTaskStatus = () => {};
+  const changeTaskStatus = (e) => {
+    const projectName = document.querySelector('#content-title').textContent;
+    const taskDiv = e.target.parentNode;
+    const taskTitle = taskDiv.children[1].textContent;
+
+    if (e.target.checked) {
+      taskDiv.classList.add('completed');
+      Storage.changeTaskStatus(projectName, taskTitle, 'completed');
+    } else {
+      taskDiv.classList.remove('completed');
+      Storage.changeTaskStatus(projectName, taskTitle, 'ongoing');
+    }
+  };
+
+  const clearTasks = () => {
+    const tasksList = document.querySelector('.tasks-list');
+
+    tasksList.textContent = '';
+  };
 
   const openTaskPopup = () => {
     const addTaskBtn = document.querySelector('.add-task-btn');
@@ -316,6 +352,7 @@ const UI = (() => {
     editTask,
     deleteTask,
     changeTaskStatus,
+    clearTasks,
     openTaskPopup,
     closeTaskPopup,
     initAddTaskButtons,
