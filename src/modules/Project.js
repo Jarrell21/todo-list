@@ -13,6 +13,9 @@ const project = (projectName) => {
 
   const getTasks = () => tasks;
 
+  const getTask = (taskTitle) =>
+    tasks.find((task) => task.getTitle() === taskTitle);
+
   const addTask = (newTask) => {
     tasks.push(newTask);
   };
@@ -26,7 +29,16 @@ const project = (projectName) => {
     tasks: getTasks(),
   });
 
-  return { toJSON, setTasks, getName, setName, getTasks, addTask, deleteTask };
+  return {
+    toJSON,
+    setTasks,
+    getName,
+    setName,
+    getTasks,
+    getTask,
+    addTask,
+    deleteTask,
+  };
 };
 
 export default project;
