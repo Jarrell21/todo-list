@@ -39,10 +39,22 @@ button {
     padding: 20px;
 }
 
-.project-section, .projects-container {
+.active {
+    background-color: aqua;
+}
+
+.project-section, .projects-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+}
+
+.project {
+    display: flex;
+}
+
+.project > button {
+    width: 100%;
 }
 
 .project-popup, .task-popup {
