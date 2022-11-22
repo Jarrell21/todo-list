@@ -62,8 +62,22 @@ button {
     display: flex;
 }
 
-.project > button {
+.project-btn {
+    display: flex;
+    justify-content: space-between;
     width: 100%;
+}
+
+.project-btn:hover, .nav-btn:hover{
+    background-color: aqua;
+}
+
+.project-delete-btn {
+    display: none;
+}
+
+.project-btn:hover > .project-delete-btn {
+    display: inline;
 }
 
 .project-popup, .task-popup {
