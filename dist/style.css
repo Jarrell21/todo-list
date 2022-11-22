@@ -43,6 +43,15 @@ button {
     background-color: aqua;
 }
 
+.completed {
+    opacity: 0.5;
+    transition: opacity 0.1s linear;
+}
+
+.completed > p {
+    text-decoration: line-through;
+}
+
 .project-section, .projects-list {
     display: flex;
     flex-direction: column;
