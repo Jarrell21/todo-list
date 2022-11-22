@@ -32,6 +32,7 @@ const Storage = (() => {
         project.getTasks().forEach((task) => {
           task.setTitle(task.title);
           task.setDate(task.dueDate);
+          task.setStatus(task.status);
         });
       });
     } else {
@@ -70,6 +71,18 @@ const Storage = (() => {
     Storage.saveTodoList(todoList);
   };
 
+  const renameTask = (projectName, taskName, newTaskName) => {
+    const todoList = Storage.getTodoList();
+    todoList.getProject(projectName).getTask(taskName).setName(newTaskName);
+    Storage.saveTodoList(todoList);
+  };
+
+  const changeTaskStatus = (projectName, taskName, status) => {
+    const todoList = Storage.getTodoList();
+    todoList.getProject(projectName).getTask(taskName).setStatus(status);
+    Storage.saveTodoList(todoList);
+  };
+
   const deleteTask = (projectName, taskName) => {
     const todoList = Storage.getTodoList();
     todoList.getProject(projectName).deleteTask(taskName);
@@ -81,6 +94,8 @@ const Storage = (() => {
     saveTodoList,
     addTask,
     addProject,
+    renameTask,
+    changeTaskStatus,
     deleteProject,
     deleteTask,
   };
