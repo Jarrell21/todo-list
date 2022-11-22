@@ -11,8 +11,15 @@ const UI = (() => {
   };
 
   const openProject = (projectName, projectButton) => {
+    const allButtons = document.querySelectorAll('button');
+
     UI.loadProjectContent(projectName);
-    console.log('this btn', projectButton);
+
+    allButtons.forEach((button) => {
+      button.classList.remove('active');
+    });
+
+    projectButton.classList.add('active');
   };
 
   const loadProjectContent = (projectName) => {
@@ -63,12 +70,32 @@ const UI = (() => {
     UI.initProjectButtons();
   };
 
+  const loadHomeTasks = (e) => {
+    UI.openProject('Home', e.currentTarget);
+  };
+
+  const loadTodayTasks = (e) => {
+    UI.openProject('Today', e.currentTarget);
+  };
+
+  const loadThisWeekTasks = (e) => {
+    UI.openProject('This week', e.currentTarget);
+  };
+
   // Content creation
 
   const createNewProject = (project) => {
-    const container = document.querySelector('.projects-container');
+    const container = document.querySelector('.projects-list');
 
-    container.innerHTML += `<button id="${project}-btn" class="project-btn">${project}</button>`;
+    container.innerHTML += `
+    <div class="project">
+      <button class="project-btn">
+        <span>${project}</span>
+        <span class="delete-btn">x</span>
+      </button>
+      
+    </div>
+    `;
 
     UI.initProjectButtons();
   };
@@ -97,15 +124,25 @@ const UI = (() => {
     const thisWeekButton = document.querySelector('#this-week-btn');
     const projectsBtn = document.querySelectorAll('.project-btn');
 
+    homeButton.addEventListener('click', UI.loadHomeTasks);
+    todayButton.addEventListener('click', UI.loadTodayTasks);
+    thisWeekButton.addEventListener('click', UI.loadThisWeekTasks);
+
     projectsBtn.forEach((btn) => {
       btn.addEventListener('click', UI.handleProjectButtons);
     });
   };
 
   const handleProjectButtons = (e) => {
-    const projectName = e.target.textContent;
+    const button = e.currentTarget;
+    const projectName = button.children[0].textContent;
 
-    UI.openProject(projectName);
+    if (e.target.classList.contains('delete-btn')) {
+      UI.deleteProject(projectName, button);
+      return;
+    }
+
+    UI.openProject(projectName, button);
   };
 
   const initAddProjectButtons = () => {
@@ -127,6 +164,27 @@ const UI = (() => {
     Storage.addProject(newProject);
     UI.createNewProject(newProject.getName());
     UI.closeProjectPopup();
+  };
+
+  const deleteProject = (projectName, button) => {
+    if (button.classList.contains('active')) {
+      UI.clearProjectContent();
+    }
+    Storage.deleteProject(projectName);
+    UI.clearProjects();
+    UI.loadProjects();
+  };
+
+  const clearProjects = () => {
+    const projectsList = document.querySelector('.projects-list');
+
+    projectsList.textContent = '';
+  };
+
+  const clearProjectContent = () => {
+    const content = document.querySelector('#content');
+
+    content.textContent = '';
   };
 
   const openProjectPopup = () => {
@@ -241,9 +299,15 @@ const UI = (() => {
     loadHomePage,
     loadProjects,
     loadProjectContent,
+    loadHomeTasks,
+    loadTodayTasks,
+    loadThisWeekTasks,
     createNewProject,
-    addProject,
     openProject,
+    addProject,
+    deleteProject,
+    clearProjects,
+    clearProjectContent,
     openProjectPopup,
     closeProjectPopup,
     loadTasks,
