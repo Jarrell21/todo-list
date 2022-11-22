@@ -14,7 +14,6 @@ const UI = (() => {
     const allButtons = document.querySelectorAll('button');
 
     UI.loadProjectContent(projectName);
-
     allButtons.forEach((button) => {
       button.classList.remove('active');
     });
@@ -91,7 +90,7 @@ const UI = (() => {
     <div class="project">
       <button class="project-btn">
         <span>${project}</span>
-        <span class="delete-btn">x</span>
+        <span class="project-delete-btn">x</span>
       </button>
       
     </div>
@@ -152,7 +151,7 @@ const UI = (() => {
     const button = e.currentTarget;
     const projectName = button.children[0].textContent;
 
-    if (e.target.classList.contains('delete-btn')) {
+    if (e.target.classList.contains('project-delete-btn')) {
       UI.deleteProject(projectName, button);
       return;
     }
