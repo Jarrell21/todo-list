@@ -17,12 +17,16 @@ const project = (projectName) => {
     tasks.push(newTask);
   };
 
+  const deleteTask = (taskTitle) => {
+    tasks = tasks.filter((task) => task.getTitle() !== taskTitle);
+  };
+
   const toJSON = () => ({
     projectName: getName(),
     tasks: getTasks(),
   });
 
-  return { toJSON, setTasks, getName, setName, getTasks, addTask };
+  return { toJSON, setTasks, getName, setName, getTasks, addTask, deleteTask };
 };
 
 export default project;

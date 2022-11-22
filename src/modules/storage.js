@@ -64,7 +64,13 @@ const Storage = (() => {
     Storage.saveTodoList(todoList);
   };
 
-  return { getTodoList, saveTodoList, addTask, addProject };
+  const deleteTask = (projectName, taskName) => {
+    const todoList = Storage.getTodoList();
+    todoList.getProject(projectName).deleteTask(taskName);
+    Storage.saveTodoList(todoList);
+  };
+
+  return { getTodoList, saveTodoList, addTask, addProject, deleteTask };
 })();
 
 export default Storage;

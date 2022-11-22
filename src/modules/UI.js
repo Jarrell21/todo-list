@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import Task from './task';
 import Storage from './Storage';
 import Project from './project';
@@ -19,10 +20,13 @@ const UI = (() => {
     content.innerHTML = `
         <div id="content-title">${projectName}</div>
         <div id="content-body">
-          <div class="tasks-list"></div>`;
+          <div class="tasks-list"></div>
+        </div>`;
+
+    const contentBody = document.querySelector('#content-body');
 
     if (projectName !== 'Today' && projectName !== 'This week') {
-      content.innerHTML += `
+      contentBody.innerHTML += `
                 <button class="add-task-btn">
                   Add Task
                 </button>
@@ -37,8 +41,7 @@ const UI = (() => {
                       CANCEL
                     </button>
                   </div>
-                </div>
-              </div>`;
+                </div>`;
     }
 
     UI.loadTasks(projectName);
@@ -75,12 +78,15 @@ const UI = (() => {
 
     container.innerHTML += `
       <div class="task">
-        <input type="checkbox">
+        <input type="checkbox" class="task-checkbox">
         <p>${task.getTitle()}</p>
         <p>${task.getDateFormatted()}</p>
-        <button>X</button>
+        <button class="edit-task-btn">Edit</button>
+        <button class="delete-task-btn">Delete</button>
       </div>
       `;
+
+    UI.initTaskButtons();
   };
 
   // Project event listeners
@@ -96,6 +102,12 @@ const UI = (() => {
     });
   };
 
+  const handleProjectButtons = (e) => {
+    const projectName = e.target.textContent;
+
+    UI.openProject(projectName);
+  };
+
   const initAddProjectButtons = () => {
     const addProjectBtn = document.querySelector('.add-project-btn');
     const projectPopupAdd = document.querySelector('.project-popup-add-btn');
@@ -106,12 +118,6 @@ const UI = (() => {
     projectPopupAdd.addEventListener('click', UI.addProject);
 
     projectPopupCancel.addEventListener('click', UI.closeProjectPopup);
-  };
-
-  const handleProjectButtons = (e) => {
-    const projectName = e.target.textContent;
-
-    UI.openProject(projectName);
   };
 
   const addProject = () => {
@@ -142,6 +148,22 @@ const UI = (() => {
   };
 
   // Task event listeners
+
+  const initTaskButtons = () => {
+    const taskCheckbox = document.querySelectorAll('.task-checkbox');
+    const editTaskBtn = document.querySelectorAll('.edit-task-btn');
+    const deleteTaskBtn = document.querySelectorAll('.delete-task-btn');
+
+    taskCheckbox.forEach((checkbox) => {
+      checkbox.addEventListener('change', UI.changeTaskStatus);
+    });
+    editTaskBtn.forEach((btn) => {
+      btn.addEventListener('click', UI.editTask);
+    });
+    deleteTaskBtn.forEach((btn) => {
+      btn.addEventListener('click', UI.deleteTask);
+    });
+  };
 
   const initAddTaskButtons = () => {
     const addTaskBtn = document.querySelector('.add-task-btn');
@@ -182,6 +204,21 @@ const UI = (() => {
     UI.createNewTask(newTask);
   };
 
+  const editTask = (e) => {
+    const taskTitle = e.target.parentNode.children[1].textContent;
+    const taskDate = e.target.parentNode.children[2].textContent;
+    console.log(taskTitle);
+  };
+
+  const deleteTask = (e) => {
+    const projectName = document.querySelector('#content-title').textContent;
+    const taskTitle = e.target.parentNode.children[1].textContent;
+    Storage.deleteTask(projectName, taskTitle);
+    e.target.parentNode.remove();
+  };
+
+  const changeTaskStatus = () => {};
+
   const openTaskPopup = () => {
     const addTaskBtn = document.querySelector('.add-task-btn');
     const popUpContainer = document.querySelector('.task-popup');
@@ -202,21 +239,25 @@ const UI = (() => {
 
   return {
     loadHomePage,
-    loadProjectContent,
-    addTask,
-    createNewTask,
-    loadTasks,
-    openTaskPopup,
-    closeTaskPopup,
-    openProject,
-    addProject,
-    createNewProject,
     loadProjects,
+    loadProjectContent,
+    createNewProject,
+    addProject,
+    openProject,
     openProjectPopup,
     closeProjectPopup,
+    loadTasks,
+    createNewTask,
+    addTask,
+    editTask,
+    deleteTask,
+    changeTaskStatus,
+    openTaskPopup,
+    closeTaskPopup,
     initAddTaskButtons,
     initAddProjectButtons,
     initProjectButtons,
+    initTaskButtons,
     handleProjectButtons,
   };
 })();
