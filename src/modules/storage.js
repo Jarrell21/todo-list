@@ -58,6 +58,12 @@ const Storage = (() => {
     Storage.saveTodoList(todoList);
   };
 
+  const deleteProject = (projectName) => {
+    const todoList = Storage.getTodoList();
+    todoList.deleteProject(projectName);
+    Storage.saveTodoList(todoList);
+  };
+
   const addTask = (projectName, task) => {
     const todoList = Storage.getTodoList();
     todoList.getProject(projectName).addTask(task);
@@ -70,7 +76,14 @@ const Storage = (() => {
     Storage.saveTodoList(todoList);
   };
 
-  return { getTodoList, saveTodoList, addTask, addProject, deleteTask };
+  return {
+    getTodoList,
+    saveTodoList,
+    addTask,
+    addProject,
+    deleteProject,
+    deleteTask,
+  };
 })();
 
 export default Storage;

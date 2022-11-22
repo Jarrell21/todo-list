@@ -20,11 +20,22 @@ const todoList = () => {
     projects.push(projectName);
   };
 
+  const deleteProject = (projectName) => {
+    projects = projects.filter((project) => project.getName() !== projectName);
+  };
+
   const toJSON = () => ({
     projects: getProjects(),
   });
 
-  return { toJSON, getProjects, getProject, addProject, setProjects };
+  return {
+    toJSON,
+    getProjects,
+    getProject,
+    addProject,
+    setProjects,
+    deleteProject,
+  };
 };
 
 export default todoList;
