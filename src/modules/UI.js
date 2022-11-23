@@ -100,14 +100,15 @@ const UI = (() => {
   };
 
   const createNewTask = (task) => {
-    const tasksList = document.querySelector('.tasks-list');
     const projectName = document.querySelector('#content-title').textContent;
+    const tasksList = document.querySelector('.tasks-list');
+    const taskContainer = document.createElement('div');
+    const editTaskPopup = document.createElement('div');
     const taskStatus = Storage.getTodoList()
       .getProject(projectName)
       .getTask(task.getTitle())
       .getStatus();
 
-    const taskContainer = document.createElement('div');
     taskContainer.classList.add('task');
 
     if (taskStatus === 'ongoing') {
@@ -119,12 +120,23 @@ const UI = (() => {
     }
 
     taskContainer.innerHTML += `
-        <p>${task.getTitle()}</p>
-        <p>${task.getDateFormatted()}</p>
+        <p class="task-title">${task.getTitle()}</p>
+        <p class="task-due-date">${task.getDateFormatted()}</p>
         <button class="edit-task-btn">Edit</button>
         <button class="delete-task-btn">Delete</button>
       `;
 
+    editTaskPopup.classList.add('edit-task-popup');
+    editTaskPopup.innerHTML += `
+      <input type="text" value="${task.getTitle()}" class="edit-task-task-title">
+      <input type="date" value="${task.getDate()}" class="edit-task-task-due-date">
+      <div class="edit-task-popup-buttons">
+        <button class="edit-task-save-btn">Save</button>
+        <button class="edit-task-cancel-btn">Cancel</button>
+      </div>
+    `;
+
+    taskContainer.appendChild(editTaskPopup);
     tasksList.appendChild(taskContainer);
 
     UI.initTaskButtons();
@@ -185,8 +197,7 @@ const UI = (() => {
       UI.clearProjectContent();
     }
     Storage.deleteProject(projectName);
-    UI.clearProjects();
-    UI.loadProjects();
+    button.parentNode.remove();
   };
 
   const clearProjects = () => {
@@ -230,7 +241,7 @@ const UI = (() => {
       checkbox.addEventListener('change', UI.changeTaskStatus);
     });
     editTaskBtn.forEach((btn) => {
-      btn.addEventListener('click', UI.editTask);
+      btn.addEventListener('click', UI.openEditTaskPopup);
     });
     deleteTaskBtn.forEach((btn) => {
       btn.addEventListener('click', UI.deleteTask);
@@ -278,9 +289,94 @@ const UI = (() => {
   };
 
   const editTask = (e) => {
-    const taskTitle = e.target.parentNode.children[1].textContent;
-    const taskDate = e.target.parentNode.children[2].textContent;
-    console.log(taskTitle);
+    const projectName = document.querySelector('#content-title').textContent;
+    const editTaskPopup = e.target.parentNode.parentNode;
+    const taskContainerChildren = editTaskPopup.parentNode.children;
+    const oldTaskTitle = taskContainerChildren[1].textContent;
+    const newTaskTitle = editTaskPopup.children[0].value;
+    const newTaskDueDate = editTaskPopup.children[1].value;
+
+    Storage.setTask(projectName, oldTaskTitle, newTaskTitle, newTaskDueDate);
+    UI.closeEditTaskPopup();
+    UI.clearTasks();
+    UI.loadTasks(projectName);
+    // UI.updateTask(projectName, newTaskTitle, newTaskDueDate);
+  };
+
+  const openEditTaskPopup = (e) => {
+    const taskContainerChildren = [...e.target.parentNode.children];
+    const editTaskPopup = taskContainerChildren.find((child) =>
+      child.classList.contains('edit-task-popup')
+    );
+    const editTaskPopupButtons = [...editTaskPopup.children].find((child) =>
+      child.classList.contains('edit-task-popup-buttons')
+    );
+    const editTaskPopupSaveBtn = [...editTaskPopupButtons.children].find(
+      (child) => child.classList.contains('edit-task-save-btn')
+    );
+    const editTaskPopupCancelBtn = [...editTaskPopupButtons.children].find(
+      (child) => child.classList.contains('edit-task-cancel-btn')
+    );
+
+    taskContainerChildren.forEach((child) => {
+      if (child !== editTaskPopup) {
+        child.style.display = 'none';
+      }
+    });
+
+    editTaskPopup.style.display = 'flex';
+
+    editTaskPopupCancelBtn.addEventListener('click', UI.closeEditTaskPopup);
+    editTaskPopupSaveBtn.addEventListener('click', UI.editTask);
+    UI.hideTaskButtons();
+  };
+
+  const closeEditTaskPopup = () => {
+    const taskContainerChildren = document.querySelectorAll('.task');
+
+    taskContainerChildren.forEach((task) => {
+      [...task.children].forEach((child) => {
+        if (!child.classList.contains('edit-task-popup')) {
+          child.style.display = '';
+        } else {
+          child.style.display = 'none';
+        }
+      });
+    });
+
+    UI.showTaskButtons();
+  };
+
+  const hideTaskButtons = () => {
+    const addTaskBtn = document.querySelector('.add-task-btn');
+    const allEditButtons = document.querySelectorAll('.edit-task-btn');
+    const allDeleteButtons = document.querySelectorAll('.delete-task-btn');
+
+    addTaskBtn.style.display = 'none';
+
+    allEditButtons.forEach((btn) => {
+      btn.style.display = 'none';
+    });
+
+    allDeleteButtons.forEach((btn) => {
+      btn.style.display = 'none';
+    });
+  };
+
+  const showTaskButtons = () => {
+    const addTaskBtn = document.querySelector('.add-task-btn');
+    const allEditButtons = document.querySelectorAll('.edit-task-btn');
+    const allDeleteButtons = document.querySelectorAll('.delete-task-btn');
+
+    addTaskBtn.style.display = '';
+
+    allEditButtons.forEach((btn) => {
+      btn.style.display = '';
+    });
+
+    allDeleteButtons.forEach((btn) => {
+      btn.style.display = '';
+    });
   };
 
   const deleteTask = (e) => {
@@ -352,6 +448,10 @@ const UI = (() => {
     deleteTask,
     changeTaskStatus,
     clearTasks,
+    openEditTaskPopup,
+    closeEditTaskPopup,
+    hideTaskButtons,
+    showTaskButtons,
     openTaskPopup,
     closeTaskPopup,
     initAddTaskButtons,
