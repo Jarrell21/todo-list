@@ -16,6 +16,9 @@ const project = (projectName) => {
   const getTask = (taskTitle) =>
     tasks.find((task) => task.getTitle() === taskTitle);
 
+  const contains = (taskTitle) =>
+    tasks.some((task) => task.getTitle() === taskTitle);
+
   const addTask = (newTask) => {
     tasks.push(newTask);
   };
@@ -36,6 +39,7 @@ const project = (projectName) => {
     setName,
     getTasks,
     getTask,
+    contains,
     addTask,
     deleteTask,
   };
