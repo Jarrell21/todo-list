@@ -71,11 +71,18 @@ const Storage = (() => {
     Storage.saveTodoList(todoList);
   };
 
-  const renameTask = (projectName, taskName, newTaskName) => {
+  const setTask = (projectName, taskName, newTaskName, newTaskDueDate) => {
     const todoList = Storage.getTodoList();
-    todoList.getProject(projectName).getTask(taskName).setName(newTaskName);
+    todoList.getProject(projectName).getTask(taskName).setTitle(newTaskName);
+    todoList.getProject(projectName).getTask(taskName).setDate(newTaskDueDate);
     Storage.saveTodoList(todoList);
   };
+
+  // const setTaskDueDate = (projectName, taskName, newTaskDueDate) => {
+  //   const todoList = Storage.getTodoList();
+  //   todoList.getProject(projectName).getTask(taskName).setDate(newTaskDueDate);
+  //   Storage.saveTodoList(todoList);
+  // };
 
   const changeTaskStatus = (projectName, taskName, status) => {
     const todoList = Storage.getTodoList();
@@ -94,7 +101,7 @@ const Storage = (() => {
     saveTodoList,
     addTask,
     addProject,
-    renameTask,
+    setTask,
     changeTaskStatus,
     deleteProject,
     deleteTask,
