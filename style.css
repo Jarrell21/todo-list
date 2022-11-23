@@ -105,3 +105,8 @@ button {
     display: flex;
     gap: 5px;
 }
+
+.edit-task-popup {
+    display: none;
+    flex-direction: column;
+}
