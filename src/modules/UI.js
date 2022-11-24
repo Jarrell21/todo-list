@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
-import Task from './task';
+import Task from './Task';
 import Storage from './Storage';
-import Project from './project';
+import Project from './Project';
 
 const UI = (() => {
   const loadHomePage = () => {
@@ -290,17 +290,26 @@ const UI = (() => {
 
   const editTask = (e) => {
     const projectName = document.querySelector('#content-title').textContent;
-    const editTaskPopup = e.target.parentNode.parentNode;
-    const taskContainerChildren = editTaskPopup.parentNode.children;
-    const oldTaskTitle = taskContainerChildren[1].textContent;
-    const newTaskTitle = editTaskPopup.children[0].value;
-    const newTaskDueDate = editTaskPopup.children[1].value;
+    const taskContainerChildren = [
+      ...e.target.parentNode.parentNode.parentNode.children,
+    ];
+    const editTaskPopup = taskContainerChildren.find((child) =>
+      child.classList.contains('edit-task-popup')
+    );
+    const oldTaskTitle = taskContainerChildren.find((child) =>
+      child.classList.contains('task-title')
+    ).textContent;
+    const newTaskTitle = [...editTaskPopup.children].find((child) =>
+      child.classList.contains('edit-task-task-title')
+    ).value;
+    const newTaskDueDate = [...editTaskPopup.children].find((child) =>
+      child.classList.contains('edit-task-task-due-date')
+    ).value;
 
     Storage.setTask(projectName, oldTaskTitle, newTaskTitle, newTaskDueDate);
     UI.closeEditTaskPopup();
     UI.clearTasks();
     UI.loadTasks(projectName);
-    // UI.updateTask(projectName, newTaskTitle, newTaskDueDate);
   };
 
   const openEditTaskPopup = (e) => {
