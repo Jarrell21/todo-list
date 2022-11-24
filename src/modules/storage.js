@@ -1,6 +1,6 @@
-import Project from './project';
-import TodoList from './todoList';
-import Task from './task';
+import Project from './Project';
+import TodoList from './TodoList';
+import Task from './Task';
 
 const Storage = (() => {
   const saveTodoList = (data) => {
@@ -73,16 +73,10 @@ const Storage = (() => {
 
   const setTask = (projectName, taskName, newTaskName, newTaskDueDate) => {
     const todoList = Storage.getTodoList();
-    todoList.getProject(projectName).getTask(taskName).setTitle(newTaskName);
     todoList.getProject(projectName).getTask(taskName).setDate(newTaskDueDate);
+    todoList.getProject(projectName).getTask(taskName).setTitle(newTaskName);
     Storage.saveTodoList(todoList);
   };
-
-  // const setTaskDueDate = (projectName, taskName, newTaskDueDate) => {
-  //   const todoList = Storage.getTodoList();
-  //   todoList.getProject(projectName).getTask(taskName).setDate(newTaskDueDate);
-  //   Storage.saveTodoList(todoList);
-  // };
 
   const changeTaskStatus = (projectName, taskName, status) => {
     const todoList = Storage.getTodoList();
