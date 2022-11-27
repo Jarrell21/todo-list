@@ -1,3 +1,4 @@
+import { isToday } from 'date-fns';
 import Project from './Project';
 import TodoList from './TodoList';
 import Task from './Task';
@@ -90,6 +91,28 @@ const Storage = (() => {
     Storage.saveTodoList(todoList);
   };
 
+  const updateTodayTasks = () => {
+    const todoList = Storage.getTodoList();
+    const todayProjectTasks = todoList.getProjects().map((project) => ({
+      projectName: project.getName(),
+      tasks: project
+        .getTasks()
+        .filter((projectTask) => isToday(new Date(projectTask.getDate()))),
+    }));
+
+    todoList.getProject('Today').setTasks([]);
+
+    todayProjectTasks
+      .filter((projectTask) => projectTask.projectName !== 'Today')
+      .forEach((projectTask) => {
+        projectTask.tasks.forEach((task) => {
+          todoList.getProject('Today').addTask(task);
+        });
+      });
+
+    Storage.saveTodoList(todoList);
+  };
+
   return {
     getTodoList,
     saveTodoList,
@@ -99,6 +122,7 @@ const Storage = (() => {
     changeTaskStatus,
     deleteProject,
     deleteTask,
+    updateTodayTasks,
   };
 })();
 

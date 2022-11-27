@@ -74,6 +74,7 @@ const UI = (() => {
   };
 
   const loadTodayTasks = (e) => {
+    Storage.updateTodayTasks();
     UI.openProject('Today', e.currentTarget);
   };
 
@@ -103,7 +104,6 @@ const UI = (() => {
     const projectName = document.querySelector('#content-title').textContent;
     const tasksList = document.querySelector('.tasks-list');
     const taskContainer = document.createElement('div');
-    const editTaskPopup = document.createElement('div');
     const taskStatus = Storage.getTodoList()
       .getProject(projectName)
       .getTask(task.getTitle())
@@ -126,6 +126,15 @@ const UI = (() => {
         <button class="delete-task-btn">Delete</button>
       `;
 
+    taskContainer.appendChild(UI.createEditTaskPopup(task));
+    tasksList.appendChild(taskContainer);
+
+    UI.initTaskButtons();
+  };
+
+  const createEditTaskPopup = (task) => {
+    const editTaskPopup = document.createElement('div');
+
     editTaskPopup.classList.add('edit-task-popup');
     editTaskPopup.innerHTML += `
       <input type="text" value="${task.getTitle()}" class="edit-task-task-title">
@@ -136,10 +145,7 @@ const UI = (() => {
       </div>
     `;
 
-    taskContainer.appendChild(editTaskPopup);
-    tasksList.appendChild(taskContainer);
-
-    UI.initTaskButtons();
+    return editTaskPopup;
   };
 
   // Project event listeners
@@ -452,6 +458,7 @@ const UI = (() => {
     closeProjectPopup,
     loadTasks,
     createNewTask,
+    createEditTaskPopup,
     addTask,
     editTask,
     deleteTask,
