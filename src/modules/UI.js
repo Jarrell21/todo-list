@@ -7,6 +7,7 @@ const UI = (() => {
   const loadHomePage = () => {
     UI.loadProjects();
     UI.initAddProjectButtons();
+    UI.initProjectButtons();
     UI.openProject('Home', document.getElementById('home-btn'));
   };
 
@@ -65,8 +66,6 @@ const UI = (() => {
           UI.createNewProject(project.getName());
         }
       });
-
-    UI.initProjectButtons();
   };
 
   const loadHomeTasks = (e) => {
@@ -74,11 +73,12 @@ const UI = (() => {
   };
 
   const loadTodayTasks = (e) => {
-    Storage.updateTodayTasks();
+    Storage.updateTodayProject();
     UI.openProject('Today', e.currentTarget);
   };
 
   const loadThisWeekTasks = (e) => {
+    Storage.updateThisWeekProject();
     UI.openProject('This week', e.currentTarget);
   };
 
@@ -136,8 +136,9 @@ const UI = (() => {
     const editTaskPopup = document.createElement('div');
 
     editTaskPopup.classList.add('edit-task-popup');
+    const taskTitle = task.getTitle().split('(')[0].trim();
     editTaskPopup.innerHTML += `
-      <input type="text" value="${task.getTitle()}" class="edit-task-task-title">
+      <input type="text" value="${taskTitle}" class="edit-task-task-title">
       <input type="date" value="${task.getDate()}" class="edit-task-task-due-date">
       <div class="edit-task-popup-buttons">
         <button class="edit-task-save-btn">Save</button>
@@ -192,6 +193,16 @@ const UI = (() => {
   const addProject = () => {
     const projectName = document.querySelector('.project-popup-input').value;
     const newProject = Project(projectName);
+
+    if (projectName === '') {
+      alert('Project name cant be empty');
+      return;
+    }
+
+    if (Storage.getTodoList().contains(projectName)) {
+      alert('Enter different project name');
+      return;
+    }
 
     Storage.addProject(newProject);
     UI.createNewProject(newProject.getName());
@@ -279,13 +290,18 @@ const UI = (() => {
 
   const addTask = () => {
     const projectName = document.querySelector('#content-title').textContent;
-    const taskTitle = document.querySelector('.task-popup-title').value;
+    const taskTitle = document.querySelector('.task-popup-title').value.trim();
     const taskDueDate = document.querySelector('.task-popup-date').value;
     const taskStatus = 'ongoing';
     const newTask = Task(taskTitle, taskDueDate, taskStatus);
 
     if (taskTitle === '' || taskDueDate === '') {
       alert('Fields must be complete');
+      return;
+    }
+
+    if (Storage.getTodoList().getProject(projectName).contains(taskTitle)) {
+      alert('Enter new title');
       return;
     }
 
@@ -312,7 +328,42 @@ const UI = (() => {
       child.classList.contains('edit-task-task-due-date')
     ).value;
 
-    Storage.setTask(projectName, oldTaskTitle, newTaskTitle, newTaskDueDate);
+    if (newTaskTitle === '' || newTaskDueDate === '') {
+      alert('Fields must be complete');
+      return;
+    }
+
+    if (Storage.getTodoList().getProject(projectName).contains(newTaskTitle)) {
+      alert('Enter different title');
+      return;
+    }
+
+    if (projectName === 'Today' || projectName === 'This week') {
+      const taskTitleSplit = oldTaskTitle.split('(');
+      const mainProjectName = taskTitleSplit[1].split(')')[0];
+      const mainTaskTitle = taskTitleSplit[0].trim();
+
+      if (
+        Storage.getTodoList()
+          .getProject(mainProjectName)
+          .contains(mainTaskTitle)
+      ) {
+        alert('Enter different title');
+        return;
+      }
+
+      Storage.setTask(
+        mainProjectName,
+        mainTaskTitle,
+        newTaskTitle,
+        newTaskDueDate
+      );
+      Storage.updateTodayProject();
+      Storage.updateThisWeekProject();
+    } else {
+      Storage.setTask(projectName, oldTaskTitle, newTaskTitle, newTaskDueDate);
+    }
+
     UI.closeEditTaskPopup();
     UI.clearTasks();
     UI.loadTasks(projectName);
@@ -363,11 +414,14 @@ const UI = (() => {
   };
 
   const hideTaskButtons = () => {
-    const addTaskBtn = document.querySelector('.add-task-btn');
+    const projectName = document.querySelector('#content-title').textContent;
     const allEditButtons = document.querySelectorAll('.edit-task-btn');
     const allDeleteButtons = document.querySelectorAll('.delete-task-btn');
 
-    addTaskBtn.style.display = 'none';
+    if (projectName !== 'Today' && projectName !== 'This week') {
+      const addTaskBtn = document.querySelector('.add-task-btn');
+      addTaskBtn.style.display = 'none';
+    }
 
     allEditButtons.forEach((btn) => {
       btn.style.display = 'none';
@@ -379,11 +433,14 @@ const UI = (() => {
   };
 
   const showTaskButtons = () => {
-    const addTaskBtn = document.querySelector('.add-task-btn');
+    const projectName = document.querySelector('#content-title').textContent;
     const allEditButtons = document.querySelectorAll('.edit-task-btn');
     const allDeleteButtons = document.querySelectorAll('.delete-task-btn');
 
-    addTaskBtn.style.display = '';
+    if (projectName !== 'Today' && projectName !== 'This week') {
+      const addTaskBtn = document.querySelector('.add-task-btn');
+      addTaskBtn.style.display = '';
+    }
 
     allEditButtons.forEach((btn) => {
       btn.style.display = '';
@@ -404,9 +461,15 @@ const UI = (() => {
   };
 
   const changeTaskStatus = (e) => {
-    const projectName = document.querySelector('#content-title').textContent;
+    let projectName = document.querySelector('#content-title').textContent;
     const taskDiv = e.target.parentNode;
-    const taskTitle = taskDiv.children[1].textContent;
+    let taskTitle = taskDiv.children[1].textContent;
+
+    if (projectName === 'Today' || projectName === 'This week') {
+      const taskTitleSplit = taskTitle.split('(');
+      projectName = taskTitleSplit[1].split(')')[0];
+      taskTitle = taskTitleSplit[0].trim();
+    }
 
     if (e.target.checked) {
       taskDiv.classList.add('completed');
@@ -458,12 +521,12 @@ const UI = (() => {
     closeProjectPopup,
     loadTasks,
     createNewTask,
-    createEditTaskPopup,
     addTask,
     editTask,
     deleteTask,
     changeTaskStatus,
     clearTasks,
+    createEditTaskPopup,
     openEditTaskPopup,
     closeEditTaskPopup,
     hideTaskButtons,
