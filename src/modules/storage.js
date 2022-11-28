@@ -91,25 +91,15 @@ const Storage = (() => {
     Storage.saveTodoList(todoList);
   };
 
-  const updateTodayTasks = () => {
+  const updateTodayProject = () => {
     const todoList = Storage.getTodoList();
-    const todayProjectTasks = todoList.getProjects().map((project) => ({
-      projectName: project.getName(),
-      tasks: project
-        .getTasks()
-        .filter((projectTask) => isToday(new Date(projectTask.getDate()))),
-    }));
+    todoList.updateTodayProject();
+    Storage.saveTodoList(todoList);
+  };
 
-    todoList.getProject('Today').setTasks([]);
-
-    todayProjectTasks
-      .filter((projectTask) => projectTask.projectName !== 'Today')
-      .forEach((projectTask) => {
-        projectTask.tasks.forEach((task) => {
-          todoList.getProject('Today').addTask(task);
-        });
-      });
-
+  const updateThisWeekProject = () => {
+    const todoList = Storage.getTodoList();
+    todoList.updateThisWeekProject();
     Storage.saveTodoList(todoList);
   };
 
@@ -122,7 +112,8 @@ const Storage = (() => {
     changeTaskStatus,
     deleteProject,
     deleteTask,
-    updateTodayTasks,
+    updateTodayProject,
+    updateThisWeekProject,
   };
 })();
 
