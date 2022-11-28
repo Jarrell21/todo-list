@@ -86,17 +86,20 @@ const UI = (() => {
 
   const createNewProject = (project) => {
     const container = document.querySelector('.projects-list');
+    const thisProjectContainer = document.createElement('div');
+    const button = document.createElement('button');
 
-    container.innerHTML += `
-    <div class="project">
-      <button class="project-btn">
-        <span>${project}</span>
-        <span class="project-delete-btn">x</span>
-      </button>
-      
-    </div>
-    `;
+    thisProjectContainer.classList.add('project');
 
+    button.classList.add('project-btn');
+    button.innerHTML += `
+      <span>${project}</span>
+      <span class="project-delete-btn">x</span>`;
+
+    thisProjectContainer.appendChild(button);
+    container.appendChild(thisProjectContainer);
+
+    UI.openProject(project, button);
     UI.initProjectButtons();
   };
 
@@ -191,7 +194,9 @@ const UI = (() => {
   };
 
   const addProject = () => {
-    const projectName = document.querySelector('.project-popup-input').value;
+    const projectName = document
+      .querySelector('.project-popup-input')
+      .value.trim();
     const newProject = Project(projectName);
 
     if (projectName === '') {
@@ -210,11 +215,27 @@ const UI = (() => {
   };
 
   const deleteProject = (projectName, button) => {
+    const todayButton = document.querySelector('#today-btn');
+    const thisWeekButton = document.querySelector('#this-week-btn');
+
     if (button.classList.contains('active')) {
       UI.clearProjectContent();
     }
+
     Storage.deleteProject(projectName);
     button.parentNode.remove();
+
+    if (todayButton.classList.contains('active')) {
+      Storage.updateTodayProject();
+      UI.clearTasks();
+      UI.loadTasks('Today');
+    }
+
+    if (thisWeekButton.classList.contains('active')) {
+      UI.clearTasks();
+      Storage.updateThisWeekProject();
+      UI.loadTasks('This week');
+    }
   };
 
   const clearProjects = () => {
@@ -333,24 +354,10 @@ const UI = (() => {
       return;
     }
 
-    if (Storage.getTodoList().getProject(projectName).contains(newTaskTitle)) {
-      alert('Enter different title');
-      return;
-    }
-
     if (projectName === 'Today' || projectName === 'This week') {
       const taskTitleSplit = oldTaskTitle.split('(');
       const mainProjectName = taskTitleSplit[1].split(')')[0];
       const mainTaskTitle = taskTitleSplit[0].trim();
-
-      if (
-        Storage.getTodoList()
-          .getProject(mainProjectName)
-          .contains(mainTaskTitle)
-      ) {
-        alert('Enter different title');
-        return;
-      }
 
       Storage.setTask(
         mainProjectName,
