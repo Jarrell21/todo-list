@@ -1,3 +1,5 @@
+import { isThisWeek, isToday } from 'date-fns';
+
 const project = (projectName) => {
   const getName = () => projectName;
 
@@ -27,6 +29,12 @@ const project = (projectName) => {
     tasks = tasks.filter((task) => task.getTitle() !== taskTitle);
   };
 
+  const getTasksToday = () =>
+    tasks.filter((task) => isToday(new Date(task.getDate())));
+
+  const getTasksThisWeek = () =>
+    tasks.filter((task) => isThisWeek(new Date(task.getDate())));
+
   const toJSON = () => ({
     projectName: getName(),
     tasks: getTasks(),
@@ -42,6 +50,8 @@ const project = (projectName) => {
     contains,
     addTask,
     deleteTask,
+    getTasksToday,
+    getTasksThisWeek,
   };
 };
 
