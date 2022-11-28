@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import Task from './Task';
 import Storage from './Storage';
 import Project from './Project';

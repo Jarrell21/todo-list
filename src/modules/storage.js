@@ -1,4 +1,3 @@
-import { isToday } from 'date-fns';
 import Project from './Project';
 import TodoList from './TodoList';
 import Task from './Task';
