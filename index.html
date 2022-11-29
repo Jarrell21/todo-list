@@ -10,17 +10,32 @@
 </head>
 <body>
     <header id="header">
-        <div class="header-title">Todo List</div>
+        <div>
+            <i class="fas fa-clipboard-check header-icon"></i>
+            <span class="header-title">Todo List</span>
+        </div>
     </header>
     <main id="main">
         <nav id="nav">
-            <button id="home-btn" class="nav-btn">Home</button>
-            <button id="today-btn" class="nav-btn">Today</button>
-            <button id="this-week-btn" class="nav-btn">This week</button>
+            <button id="home-btn" class="nav-btn">
+                <i class="fa-solid fa-house"></i>
+                Home
+            </button>
+            <button id="today-btn" class="nav-btn">
+                <i class="fa-solid fa-cloud-sun"></i>
+                Today
+            </button>
+            <button id="this-week-btn" class="nav-btn">
+                <i class="fa-solid fa-calendar-week"></i>
+                This week
+            </button>
             <div class="project-section">
                 <h2 id="projects-title">Projects</h2>
                 <div class="projects-list"></div>
-                <button class="add-project-btn">Add project</button>
+                <button class="add-project-btn">
+                    Add project
+                    <i class="fa-solid fa-plus"></i>
+                </button>
                 <div class="project-popup">
                     <input type="text" name="" class="project-popup-input">
                     <div class="project-popup-btns">
