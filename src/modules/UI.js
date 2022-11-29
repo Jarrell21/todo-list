@@ -35,6 +35,7 @@ const UI = (() => {
       contentBody.innerHTML += `
                 <button class="add-task-btn">
                   Add Task
+                  <i class="fa-solid fa-plus"></i>
                 </button>
                 <div class="task-popup" style="display: none">
                   <input placeholder="Title" class="task-popup-title">
