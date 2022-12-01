@@ -1,3 +1,11 @@
+:root {
+    --primary-color: yellow;
+    --bg-color:rgb(241, 241, 241);
+    --header-color: rgba(175, 170, 170, 0.7);
+    --task-color: white;
+    --border-color: rgb(184, 182, 182);
+}
+
 *{
     padding: 0;
     margin: 0;
@@ -8,6 +16,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     height: 100vh;
+    background-color: var(--bg-color)
 }
 
 button {
@@ -15,15 +24,30 @@ button {
     font-size: 1.1rem;
     cursor: pointer;
     text-align: start;
+    background-color: var(--task-color);
+    border: solid var(--border-color) 1px ;
+    border-radius: 5px;
+}
+
+input {
+    height: 2rem;
+    border: solid var(--border-color) 1px ;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 1rem;
+}
+
+input[type=checkbox] {
+    accent-color: gray;
 }
 
 
 #header, #footer {
-    background-color: rgba(175, 170, 170, 0.7);
+    background-color: var(--header-color)
 }
 
 #header {
-    padding: 1.5rem;
+    padding: 10px;
 }
 
 .header-icon {
@@ -46,20 +70,26 @@ button {
     gap: 1rem;
     width: 10%;
     padding: 20px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .active {
-    background-color: aqua;
+    background-color: yellow;
 }
 
-.completed {
+.completed > p{
     opacity: 0.5;
     transition: opacity 0.1s linear;
 }
 
 .completed > p {
     text-decoration: line-through;
+}
+
+.add-project-btn {
+    display: flex;
+    justify-content: space-between;
 }
 
 .project-section, .projects-list {
@@ -75,16 +105,11 @@ button {
 }
 
 .project-btn:hover, .nav-btn:hover{
-    background-color: aqua;
+    background-color: var(--primary-color);
 }
 
 .project-delete-btn {
-    display: none;
     font-weight: bold;
-}
-
-.project-btn:hover > .project-delete-btn {
-    display: block;
 }
 
 .project-popup, .task-popup {
@@ -93,10 +118,10 @@ button {
     gap: 5px;
 }
 
-.project-popup-input, .task-popup-title {
+/* .project-popup-input, .task-popup-title {
     height: 2rem;
     width: 100%;
-}
+} */
 
 .project-popup-btns, .task-popup-btns {
     display: flex;
@@ -106,7 +131,8 @@ button {
 #content {
     width: 90%;
     padding: 20px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #content-title {
@@ -130,24 +156,114 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: solid black 1px;
+    border: solid var(--border-color) 1px;
     border-radius: 10px;
     padding: 10px;
+    width: 50%;
+    background-color: var(--task-color);
+}
+
+.task > p {
+    font-size: 1rem;
+}
+
+.task-buttons > button {
+    border: none;
+    margin: 10px;
+    background-color: transparent;
+}
+
+.edit-task-btn:hover {
+    background-color: rgb(9, 218, 9)
+}
+
+.delete-task-btn:hover {
+    background-color: rgb(248, 62, 62);
+}
+
+.task-popup {
     width: 50%;
 }
 
 .edit-task-popup {
     display: none;
-    flex-direction: column;
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px;
+    gap: 5px;
 }
 
-@media (min-width:550px) {
+.edit-task-save-btn:hover {
+    background-color: rgb(9, 218, 9)
+}
+
+.edit-task-cancel-btn:hover {
+    background-color: rgb(248, 62, 62);
+}
+
+
+@media (min-width: 320px){
+    #nav {
+        padding: 10px;
+        width: 30%;
+    }
+
+    #content {
+        padding: 5px;
+        width: 70%;
+    }
+
+    .task {
+        width: 90%;
+    }
+
+    .task-due-date {
+        display: none;
+    }
+
+    .task-popup {
+        width: 100%;
+    }
+
+    .edit-task-popup {
+        flex-direction: column;
+    }
+}
+
+@media (min-width:480px) {
     #nav {
         width: 20%;
     }
 
     #content {
         width: 80%;
+    }
+
+    .task {
+        width: 90%
+    }
+
+    .task-due-date {
+        display: block;
+    }
+
+    .task-popup {
+        width: 80%;
+    }
+}
+
+
+@media (min-width: 800px){
+    .task {
+        width: 90%;
+    }
+
+    .task-popup {
+        width: 50%;
+    }
+
+    .edit-task-popup {
+        flex-direction: row;
     }
 }
 
@@ -158,5 +274,13 @@ button {
 
     #content {
         width: 90%;
+    }
+
+    .task {
+        width: 60%;
+    }
+
+    .task-popup {
+        width: 30%;
     }
 }

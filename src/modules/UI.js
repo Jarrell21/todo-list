@@ -125,8 +125,10 @@ const UI = (() => {
     taskContainer.innerHTML += `
         <p class="task-title">${task.getTitle()}</p>
         <p class="task-due-date">${task.getDateFormatted()}</p>
-        <button class="edit-task-btn">Edit</button>
-        <button class="delete-task-btn">Delete</button>
+        <div class="task-buttons">
+          <button class="edit-task-btn"><i class="fa-solid fa-pen-to-square"></i></button>
+          <button class="delete-task-btn"><i class="fa-solid fa-trash"></i></button>
+        </div>
       `;
 
     taskContainer.appendChild(UI.createEditTaskPopup(task));
@@ -144,8 +146,8 @@ const UI = (() => {
       <input type="text" value="${taskTitle}" class="edit-task-task-title">
       <input type="date" value="${task.getDate()}" class="edit-task-task-due-date">
       <div class="edit-task-popup-buttons">
-        <button class="edit-task-save-btn">Save</button>
-        <button class="edit-task-cancel-btn">Cancel</button>
+        <button class="edit-task-save-btn"><i class="fa-solid fa-check"></i></button>
+        <button class="edit-task-cancel-btn"><i class="fa-solid fa-ban"></i></button>
       </div>
     `;
 
@@ -263,7 +265,7 @@ const UI = (() => {
     const popUpContainer = document.querySelector('.project-popup');
     const popUpInput = document.querySelector('.project-popup-input');
 
-    addProjectBtn.style.display = 'block';
+    addProjectBtn.style.display = 'flex';
     popUpContainer.style.display = 'none';
     popUpInput.value = '';
   };
@@ -334,7 +336,7 @@ const UI = (() => {
   const editTask = (e) => {
     const projectName = document.querySelector('#content-title').textContent;
     const taskContainerChildren = [
-      ...e.target.parentNode.parentNode.parentNode.children,
+      ...e.currentTarget.parentNode.parentNode.parentNode.children,
     ];
     const editTaskPopup = taskContainerChildren.find((child) =>
       child.classList.contains('edit-task-popup')
@@ -377,7 +379,9 @@ const UI = (() => {
   };
 
   const openEditTaskPopup = (e) => {
-    const taskContainerChildren = [...e.target.parentNode.children];
+    const taskContainerChildren = [
+      ...e.currentTarget.parentNode.parentNode.children,
+    ];
     const editTaskPopup = taskContainerChildren.find((child) =>
       child.classList.contains('edit-task-popup')
     );
@@ -409,10 +413,10 @@ const UI = (() => {
 
     taskContainerChildren.forEach((task) => {
       [...task.children].forEach((child) => {
-        if (!child.classList.contains('edit-task-popup')) {
-          child.style.display = '';
-        } else {
+        if (child.classList.contains('edit-task-popup')) {
           child.style.display = 'none';
+        } else {
+          child.style.display = '';
         }
       });
     });
@@ -427,15 +431,15 @@ const UI = (() => {
 
     if (projectName !== 'Today' && projectName !== 'This week') {
       const addTaskBtn = document.querySelector('.add-task-btn');
-      addTaskBtn.style.display = 'none';
+      addTaskBtn.style.visibility = 'hidden';
     }
 
     allEditButtons.forEach((btn) => {
-      btn.style.display = 'none';
+      btn.style.visibility = 'hidden';
     });
 
     allDeleteButtons.forEach((btn) => {
-      btn.style.display = 'none';
+      btn.style.visibility = 'hidden';
     });
   };
 
@@ -446,21 +450,22 @@ const UI = (() => {
 
     if (projectName !== 'Today' && projectName !== 'This week') {
       const addTaskBtn = document.querySelector('.add-task-btn');
-      addTaskBtn.style.display = '';
+      addTaskBtn.style.visibility = 'visible';
     }
 
     allEditButtons.forEach((btn) => {
-      btn.style.display = '';
+      btn.style.visibility = 'visible';
     });
 
     allDeleteButtons.forEach((btn) => {
-      btn.style.display = '';
+      btn.style.visibility = 'visible';
     });
   };
 
   const deleteTask = (e) => {
     const projectName = document.querySelector('#content-title').textContent;
-    const taskTitle = e.target.parentNode.children[1].textContent;
+    const taskTitle =
+      e.currentTarget.parentNode.parentNode.children[1].textContent;
 
     Storage.deleteTask(projectName, taskTitle);
     UI.clearTasks();
