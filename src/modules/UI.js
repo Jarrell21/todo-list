@@ -463,13 +463,19 @@ const UI = (() => {
   };
 
   const deleteTask = (e) => {
-    const projectName = document.querySelector('#content-title').textContent;
-    const taskTitle =
+    let projectName = document.querySelector('#content-title').textContent;
+    const thisTaskContainer = e.currentTarget.parentNode.parentNode;
+    let taskTitle =
       e.currentTarget.parentNode.parentNode.children[1].textContent;
 
+    if (projectName === 'Today' || projectName === 'This week') {
+      const taskTitleSplit = taskTitle.split('(');
+      projectName = taskTitleSplit[1].split(')')[0];
+      taskTitle = taskTitleSplit[0].trim();
+    }
+
     Storage.deleteTask(projectName, taskTitle);
-    UI.clearTasks();
-    UI.loadTasks(projectName);
+    thisTaskContainer.remove();
   };
 
   const changeTaskStatus = (e) => {
