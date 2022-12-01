@@ -48,28 +48,32 @@ input[type=checkbox] {
 
 #header {
     padding: 10px;
+    text-align: center;
 }
 
 .header-icon {
     font-size: 1.5rem;
     color: yellow;
 }
+
 .header-title {
     font-size: 1.5rem;
 }
 
 #main {
     display: flex;
+    margin: 0 auto;
     width: 100%;
-    height: 90%;
+    max-width: 1000px;
+    height:90%;
 }
 
 #nav {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    width: 10%;
-    padding: 20px;
+    padding: 10px;
+    width: 30%;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -129,8 +133,8 @@ input[type=checkbox] {
 }
 
 #content {
-    width: 90%;
-    padding: 20px;
+    padding: 5px;
+    width: 70%;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -142,7 +146,6 @@ input[type=checkbox] {
 
 #content-body {
     margin: 10px;
-
 }
 
 .tasks-list {
@@ -159,17 +162,20 @@ input[type=checkbox] {
     border: solid var(--border-color) 1px;
     border-radius: 10px;
     padding: 10px;
-    width: 50%;
     background-color: var(--task-color);
+    width: 90%;
 }
 
 .task > p {
     font-size: 1rem;
 }
 
+.task-popup {
+    max-width: 330px;
+}
+
 .task-buttons > button {
     border: none;
-    margin: 10px;
     background-color: transparent;
 }
 
@@ -181,15 +187,10 @@ input[type=checkbox] {
     background-color: rgb(248, 62, 62);
 }
 
-.task-popup {
-    width: 50%;
-}
-
 .edit-task-popup {
     display: none;
     width: 100%;
     justify-content: space-between;
-    padding: 10px;
     gap: 5px;
 }
 
@@ -203,26 +204,8 @@ input[type=checkbox] {
 
 
 @media (min-width: 320px){
-    #nav {
-        padding: 10px;
-        width: 30%;
-    }
-
-    #content {
-        padding: 5px;
-        width: 70%;
-    }
-
-    .task {
-        width: 90%;
-    }
-
     .task-due-date {
         display: none;
-    }
-
-    .task-popup {
-        width: 100%;
     }
 
     .edit-task-popup {
@@ -230,57 +213,13 @@ input[type=checkbox] {
     }
 }
 
-@media (min-width:480px) {
-    #nav {
-        width: 20%;
-    }
 
-    #content {
-        width: 80%;
-    }
-
-    .task {
-        width: 90%
-    }
-
+@media (min-width: 800px){
     .task-due-date {
         display: block;
     }
 
-    .task-popup {
-        width: 80%;
-    }
-}
-
-
-@media (min-width: 800px){
-    .task {
-        width: 90%;
-    }
-
-    .task-popup {
-        width: 50%;
-    }
-
     .edit-task-popup {
         flex-direction: row;
-    }
-}
-
-@media (min-width:1281px) {
-    #nav {
-        width: 10%;
-    }
-
-    #content {
-        width: 90%;
-    }
-
-    .task {
-        width: 60%;
-    }
-
-    .task-popup {
-        width: 30%;
     }
 }
