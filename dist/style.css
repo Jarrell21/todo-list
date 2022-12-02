@@ -116,18 +116,13 @@ input[type=checkbox] {
     font-weight: bold;
 }
 
-.project-popup, .task-popup {
+.add-project-popup, .task-popup {
     display: none;
     flex-direction: column;
     gap: 5px;
 }
 
-/* .project-popup-input, .task-popup-title {
-    height: 2rem;
-    width: 100%;
-} */
-
-.project-popup-btns, .task-popup-btns {
+.add-project-popup-btns, .task-popup-btns {
     display: flex;
     justify-content: space-evenly;
 }
@@ -159,6 +154,7 @@ input[type=checkbox] {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
     border: solid var(--border-color) 1px;
     border-radius: 10px;
     padding: 10px;
@@ -172,6 +168,10 @@ input[type=checkbox] {
 
 .task-popup {
     max-width: 330px;
+}
+
+.task-buttons {
+    display: flex;
 }
 
 .task-buttons > button {

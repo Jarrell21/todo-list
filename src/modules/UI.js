@@ -197,7 +197,7 @@ const UI = (() => {
 
   const addProject = () => {
     const projectName = document
-      .querySelector('.project-popup-input')
+      .querySelector('.add-project-popup-input')
       .value.trim();
     const newProject = Project(projectName);
 
@@ -254,7 +254,7 @@ const UI = (() => {
 
   const openProjectPopup = () => {
     const addProjectBtn = document.querySelector('.add-project-btn');
-    const popUpContainer = document.querySelector('.project-popup');
+    const popUpContainer = document.querySelector('.add-project-popup');
 
     addProjectBtn.style.display = 'none';
     popUpContainer.style.display = 'flex';
@@ -262,8 +262,8 @@ const UI = (() => {
 
   const closeProjectPopup = () => {
     const addProjectBtn = document.querySelector('.add-project-btn');
-    const popUpContainer = document.querySelector('.project-popup');
-    const popUpInput = document.querySelector('.project-popup-input');
+    const popUpContainer = document.querySelector('.add-project-popup');
+    const popUpInput = document.querySelector('.add-project-popup-input');
 
     addProjectBtn.style.display = 'flex';
     popUpContainer.style.display = 'none';
